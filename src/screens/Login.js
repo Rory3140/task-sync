@@ -4,11 +4,12 @@ import {
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { Button } from "../components/Button";
+import { SubmitButton } from "../components/SubmitButton";
 import { InputField } from "../components/InputField";
 import { AuthContext } from "../context/AuthContext";
 
@@ -17,21 +18,15 @@ import { colors } from "../utils/colors";
 export const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, isLoading } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, justifyContent: "center" }}>
-      <View style={{ paddingHorizontal: 25 }}>
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: "500",
-            color: "#333",
-            marginBottom: 30,
-          }}
-        >
-          Login
-        </Text>
+    <KeyboardAvoidingView
+      className="flex-1 justify-center bg-white"
+      behavior="padding"
+    >
+      <View className="px-10">
+        <Text className="text-3xl font-thick color-black mb-6">Login</Text>
 
         <InputField
           label={"Email"}
@@ -39,7 +34,7 @@ export const Login = ({ navigation }) => {
             <MaterialIcons
               name="alternate-email"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
@@ -55,7 +50,7 @@ export const Login = ({ navigation }) => {
             <Ionicons
               name="lock-closed-outline"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
@@ -65,7 +60,7 @@ export const Login = ({ navigation }) => {
           returnKeyType="done"
         />
 
-        <Button
+        <SubmitButton
           label={"Login"}
           onPress={() => {
             login(email, password, setPassword);
