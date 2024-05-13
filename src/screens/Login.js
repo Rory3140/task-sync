@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
-  ActivityIndicator,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -25,7 +24,7 @@ export const Login = ({ navigation }) => {
       className="flex-1 justify-center bg-white"
       behavior="padding"
     >
-      <View className="px-10">
+      <View className="px-10 justify-center items-center">
         <Text className="text-3xl font-thick color-black mb-6">Login</Text>
 
         <InputField
@@ -67,21 +66,12 @@ export const Login = ({ navigation }) => {
           }}
         />
 
-        {/* <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginBottom: 30,
-          }}
-        >
-          <Text>New to the app?</Text>
+        <View className="flex-row justify-center mb-6">
+          <Text className="text-black">New to the app? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={{ color: colors.primary, fontWeight: "700" }}>
-              {" "}
-              Register
-            </Text>
+            <Text className="text-primary font-bold">Register</Text>
           </TouchableOpacity>
-        </View> */}
+        </View>
       </View>
     </KeyboardAvoidingView>
   );

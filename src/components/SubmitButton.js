@@ -10,22 +10,15 @@ export const SubmitButton = ({ label, onPress }) => {
 
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
+      disabled={isLoading}
       onPress={onPress}
-      className="bg-primary p-4 rounded-lg m-2 w-95"
+      className="bg-primary p-4 rounded-lg m-2 w-full h-14 justify-center items-center"
     >
       {isLoading ? (
         <ActivityIndicator color={colors.white} />
       ) : (
-        <Text
-          style={[
-            {
-              textAlign: "center",
-              fontWeight: "bold",
-              fontSize: 16,
-              color: colors.white,
-            },
-          ]}
-        >
+        <Text className="text-center text-md font-bold text-white">
           {label}
         </Text>
       )}

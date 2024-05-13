@@ -10,13 +10,11 @@ export const InputField = ({
   fieldButtonFunction,
   value,
   onChangeText,
-  style,
   returnKeyType,
 }) => {
   return (
     <View
       style={[
-        style,
         {
           flexDirection: "row",
           borderBottomColor: "#ccc",
