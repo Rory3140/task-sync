@@ -1,19 +1,29 @@
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 
-import { auth } from "../../firebase.config";
+import { auth, db } from "../../firebase.config";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  const usersRef = collection(db, "users");
 
   // Fetch the data from AsyncStorage when the app starts
   useEffect(() => {
     AsyncStorage.getItem("userToken").then((token) => {
       setUserToken(token);
+    });
+    AsyncStorage.getItem("userData").then((data) => {
+      setUserData(JSON.parse(data));
     });
   }, []);
 
@@ -23,9 +33,20 @@ export const AuthProvider = ({ children }) => {
       .then((userCredential) => {
         setUserToken(userCredential.user.uid);
         AsyncStorage.setItem("userToken", userCredential.user.uid);
-        // get user data from firestore
 
-        setIsLoading(false);
+        // Get user data from firestore
+        getDoc(doc(usersRef, userCredential.user.uid))
+          .then((docSnap) => {
+            if (docSnap.exists()) {
+              setUserData(docSnap.data());
+              AsyncStorage.setItem("userData", JSON.stringify(docSnap.data()));
+            }
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.log("Error getting document:", error);
+            setIsLoading(false);
+          });
       })
       .catch((error) => {
         switch (error.code) {
@@ -58,6 +79,9 @@ export const AuthProvider = ({ children }) => {
     setTimeout(() => {
       AsyncStorage.removeItem("userToken");
       setUserToken(null);
+      AsyncStorage.removeItem("userData");
+      setUserData(null);
+
       setIsLoading(false);
     }, 1000);
   };
@@ -74,9 +98,25 @@ export const AuthProvider = ({ children }) => {
       .then((userCredential) => {
         setUserToken(userCredential.user.uid);
         AsyncStorage.setItem("userToken", userCredential.user.uid);
-        // add user data to firestore
 
-        setIsLoading(false);
+        // Add user data to firestore
+        setDoc(doc(usersRef, userCredential.user.uid), {
+          email: email,
+          displayName: displayName,
+        })
+          .then(() => {
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+            setIsLoading(false);
+          });
+        // Set user data locally
+        setUserData({
+          email: email,
+          displayName: displayName,
+        });
+        AsyncStorage.setItem("userData", JSON.stringify(userData));
       })
       .catch((error) => {
         switch (error.code) {
@@ -109,6 +149,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         userToken,
+        userData,
         isLoading,
         login,
         logout,

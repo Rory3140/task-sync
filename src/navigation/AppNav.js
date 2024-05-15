@@ -6,11 +6,11 @@ import { AppStack } from "./AppStack";
 import { AuthContext } from "../context/AuthContext";
 
 export const AppNav = () => {
-  const { userToken } = useContext(AuthContext);
+  const { userToken, userData } = useContext(AuthContext);
 
   return (
     <NavigationContainer>
-      {userToken !== null ? <AppStack /> : <AuthStack />}
+      {userToken !== null && userData !== null ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

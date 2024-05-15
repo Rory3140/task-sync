@@ -1,4 +1,6 @@
 import React from "react";
+import "react-native-reanimated";
+import "react-native-gesture-handler";
 import { StatusBar } from "react-native";
 
 import { AuthProvider } from "./src/context/AuthContext";

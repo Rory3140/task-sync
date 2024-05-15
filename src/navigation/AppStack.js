@@ -1,14 +1,33 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { Dashboard } from "../screens/Dashboard";
+import { Settings } from "../screens/Settings";
 
-const Stack = createNativeStackNavigator();
+import { colors } from "../utils/colors";
+
+const Drawer = createDrawerNavigator();
 
 export const AppStack = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Dashboard" component={Dashboard} />
-    </Stack.Navigator>
+    <Drawer.Navigator
+      initialRouteName="Dashboard"
+      screenOptions={{
+        headerTitleStyle: {
+          color: colors.black,
+        },
+        headerStyle: {
+          borderBottomColor: colors.lightGrey,
+          borderBottomWidth: 0.25,
+        },
+        headerTintColor: colors.primary,
+        drawerActiveBackgroundColor: colors.secondary,
+        drawerActiveTintColor: colors.primary,
+        drawerInactiveTintColor: colors.black,
+      }}
+    >
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="Settings" component={Settings} />
+    </Drawer.Navigator>
   );
 };

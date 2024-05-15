@@ -30,7 +30,7 @@ export const Register = () => {
             <MaterialIcons
               name="alternate-email"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
@@ -46,7 +46,7 @@ export const Register = () => {
             <MaterialIcons
               name="person-outline"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
@@ -62,7 +62,7 @@ export const Register = () => {
             <Ionicons
               name="lock-closed-outline"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
@@ -78,7 +78,7 @@ export const Register = () => {
             <Ionicons
               name="lock-closed-outline"
               size={20}
-              color="#666"
+              color={colors.darkGrey}
               style={{ marginRight: 5 }}
             />
           }
