@@ -1,5 +1,11 @@
 import React, { useState, useContext } from "react";
-import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+  Platform,
+} from "react-native";
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -95,13 +101,18 @@ export const Calendar = () => {
               display="spinner"
               onChange={(event, selectedDate) => {
                 if (selectedDate) {
+                  if (Platform.OS === "android") {
+                    setShowDatePicker(false);
+                  }
                   setDate(selectedDate);
                 }
               }}
             />
-            <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-              <Ionicons name="close" color={colors.primary} size={30} />
-            </TouchableOpacity>
+            {Platform.OS === "ios" && (
+              <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                <Ionicons name="close" color={colors.primary} size={30} />
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
