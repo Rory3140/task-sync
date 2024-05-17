@@ -10,7 +10,7 @@ import { AuthContext } from "../context/AuthContext";
 import { colors } from "../utils/colors";
 
 export const Calendar = () => {
-  const { userData } = useContext(AuthContext);
+  const { userData, addEvent } = useContext(AuthContext);
 
   const [date, setDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("day");
@@ -68,11 +68,7 @@ export const Calendar = () => {
               {(() => {
                 switch (selectedOption) {
                   case "day":
-                    if (date.toDateString() === new Date().toDateString()) {
-                      return "Today";
-                    } else {
-                      return date.toDateString();
-                    }
+                    return date.toDateString();
                   case "month":
                     return `${date.toLocaleString("default", {
                       month: "long",
@@ -109,7 +105,44 @@ export const Calendar = () => {
           </View>
         )}
       </View>
-      <View className="bg-offwhite p-4 flex justify-center items-center"></View>
+      <View className="bg-offwhite p-4 flex justify-center items-center">
+        {userData.dates &&
+          userData.dates
+            .filter((event) => {
+              if (selectedOption === "day") {
+                return (
+                  new Date(event.date).toDateString() === date.toDateString()
+                );
+              } else {
+                return (
+                  new Date(event.date).getMonth() === date.getMonth() &&
+                  new Date(event.date).getFullYear() === date.getFullYear()
+                );
+              }
+            })
+            .map((event, index) => {
+              return (
+                <View
+                  key={index}
+                  className="bg-white p-2 m-2 rounded-full flex items-center justify-between w-full"
+                  style={{
+                    borderBottomWidth: 0.5,
+                    borderBottomColor: colors.lightGrey,
+                  }}
+                >
+                  <Text className="text-xl font-thin">{event.event}</Text>
+                </View>
+              );
+            })}
+        <TouchableOpacity
+          className="bg-secondary p-2 rounded-full mt-4 flex items-center justify-center"
+          onPress={() => {
+            addEvent(date, new Date().toLocaleTimeString());
+          }}
+        >
+          <Ionicons name="add" color={colors.primary} size={30} />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

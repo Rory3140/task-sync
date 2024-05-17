@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 import { auth, db } from "../../firebase.config";
 
@@ -12,6 +12,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [userData, setUserData] = useState(null);
 
@@ -19,12 +20,30 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch the data from AsyncStorage when the app starts
   useEffect(() => {
-    AsyncStorage.getItem("userToken").then((token) => {
-      setUserToken(token);
-    });
-    AsyncStorage.getItem("userData").then((data) => {
-      setUserData(JSON.parse(data));
-    });
+    setInitializing(true);
+    AsyncStorage.getItem("userToken")
+      .then((token) => {
+        if (!token) {
+          setInitializing(false);
+          return;
+        }
+
+        setUserToken(token);
+        getDoc(doc(usersRef, token))
+          .then((docSnap) => {
+            if (docSnap.exists()) {
+              setUserData(docSnap.data());
+            }
+          })
+          .catch((error) => {
+            console.log("Error getting document:", error);
+          });
+      })
+      .then(() => {
+        setTimeout(() => {
+          setInitializing(false);
+        }, 1000);
+      });
   }, []);
 
   const login = (email, password, setPassword) => {
@@ -103,6 +122,7 @@ export const AuthProvider = ({ children }) => {
         setDoc(doc(usersRef, userCredential.user.uid), {
           email: email,
           displayName: displayName,
+          dates: [],
         })
           .then(() => {
             setIsLoading(false);
@@ -115,6 +135,7 @@ export const AuthProvider = ({ children }) => {
         setUserData({
           email: email,
           displayName: displayName,
+          dates: [],
         });
         AsyncStorage.setItem("userData", JSON.stringify(userData));
       })
@@ -145,15 +166,41 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  const addEvent = (date, event) => {
+    const newDate = {
+      date: date.toISOString(),
+      event: event,
+    };
+
+    setUserData({
+      ...userData,
+      dates: [...userData.dates, newDate],
+    });
+    AsyncStorage.setItem("userData", JSON.stringify(userData));
+
+    // Update user data in firestore
+    updateDoc(doc(usersRef, userToken), {
+      dates: [...userData.dates, newDate],
+    })
+      .then(() => {
+        console.log("Document successfully updated!");
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+  };
+
   return (
     <AuthContext.Provider
       value={{
         userToken,
         userData,
         isLoading,
+        initializing,
         login,
         logout,
         signup,
+        addEvent,
       }}
     >
       {children}
