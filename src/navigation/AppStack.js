@@ -1,7 +1,7 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import { Dashboard } from "../screens/Dashboard";
+import { Calendar } from "../screens/Calendar";
 import { Settings } from "../screens/Settings";
 
 import { colors } from "../utils/colors";
@@ -11,7 +11,7 @@ const Drawer = createDrawerNavigator();
 export const AppStack = () => {
   return (
     <Drawer.Navigator
-      initialRouteName="Dashboard"
+      initialRouteName="Calendar"
       screenOptions={{
         headerTitleStyle: {
           color: colors.black,
@@ -26,7 +26,7 @@ export const AppStack = () => {
         drawerInactiveTintColor: colors.black,
       }}
     >
-      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="Calendar" component={Calendar} />
       <Drawer.Screen name="Settings" component={Settings} />
     </Drawer.Navigator>
   );
