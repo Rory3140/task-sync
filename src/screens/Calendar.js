@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   Platform,
+  ScrollView,
 } from "react-native";
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -122,7 +123,7 @@ export const Calendar = () => {
           </View>
         )}
       </View>
-      <View className="bg-offWhite p-4 flex-1 justify-start items-center">
+      <ScrollView className="bg-offWhite p-4 flex-1 w-full">
         {userData.events &&
           userData.events
             .filter((event) => {
@@ -140,10 +141,14 @@ export const Calendar = () => {
                 );
               }
             })
+            .sort((a, b) => {
+              return new Date(a.startDateTime) - new Date(b.startDateTime);
+            })
             .map((event, index) => {
               return <Event key={index} event={event} />;
             })}
-      </View>
+        <View className="h-24" />
+      </ScrollView>
       <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
         <TouchableOpacity
           className="bg-secondary py-2 px-10 rounded-full m-2 flex items-center justify-center"

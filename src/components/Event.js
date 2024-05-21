@@ -17,7 +17,26 @@ export const Event = ({ event }) => {
   return (
     <Menu className="mb-2">
       <MenuTrigger customStyles={triggerStyles}>
-        <Text className="text-xl font-thin">{event.title}</Text>
+        <View className="flex flex-row justify-between align-center w-full">
+          <View className="flex flex-col justify-between align-center">
+            <Text className="text-xl font-thick h-8">{event.title}</Text>
+            <Text className="text-sm font-thin h-6">{event.location}</Text>
+          </View>
+          <View className="flex flex-col justify-start align-center">
+            <Text className="text-sm ">
+              {new Date(event.startDateTime).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+            <Text className="text-sm">
+              {new Date(event.endDateTime).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+          </View>
+        </View>
       </MenuTrigger>
       <MenuOptions customStyles={optionsStyles}>
         <MenuOption onSelect={() => alert(`Edit`)} text="Edit" />
@@ -29,7 +48,7 @@ export const Event = ({ event }) => {
   );
 };
 
-const TRIGGER_WIDTH = 300;
+const TRIGGER_WIDTH = 350;
 const OPTIONS_WIDTH = 150;
 
 const triggerStyles = {
@@ -40,11 +59,12 @@ const triggerStyles = {
     padding: 10,
     borderRadius: 5,
     width: TRIGGER_WIDTH,
-    height: 50,
+    height: 60,
   },
   triggerTouchable: {
     style: {
       borderRadius: 5,
+      width: TRIGGER_WIDTH,
     },
   },
 };

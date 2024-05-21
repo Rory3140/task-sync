@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
@@ -18,9 +18,19 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
   const [location, setLocation] = useState("");
 
   const [startDateTime, setStartDateTime] = useState(date);
-  const [endDateTime, setEndDateTime] = useState(
-    new Date(date.getTime() + 60 * 60 * 1000)
-  );
+  const [endDateTime, setEndDateTime] = useState(date);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const currentMinutes = currentDate.getMinutes();
+    const updatedDate = new Date(date.getTime());
+    updatedDate.setMinutes(currentMinutes);
+    const roundedDownDate = new Date(
+      Math.floor(updatedDate.getTime() / (5 * 60 * 1000)) * (5 * 60 * 1000)
+    );
+    setStartDateTime(roundedDownDate);
+    setEndDateTime(new Date(roundedDownDate.getTime() + 60 * 60 * 1000));
+  }, []);
 
   function createEvent() {
     const newStartDateTime = startDateTime.toISOString();
