@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   View,
   Platform,
-  Modal,
-  TextInput,
 } from "react-native";
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -14,73 +12,10 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Event } from "../components/Event";
+import { AddEvent } from "../components/AddEvent";
 import { AuthContext } from "../context/AuthContext";
 
 import { colors } from "../utils/colors";
-
-const AddEvent = ({ date, setShowAddEvent }) => {
-  const { addEvent } = useContext(AuthContext);
-  const [event, setEvent] = useState("");
-
-  return (
-    <Modal
-      animationType="none"
-      transparent={true}
-      visible={true}
-      onRequestClose={() => {
-        setShowAddEvent(false);
-      }}
-    >
-      <View
-        className="w-full h-full absolute bg-black opacity-50"
-        onPress={() => setShowAddEvent(false)}
-      />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={true}
-        onRequestClose={() => {
-          setShowAddEvent(false);
-        }}
-      >
-        <View className="flex-1 items-center justify-end">
-          <TouchableOpacity
-            className="w-full h-full absolute"
-            onPress={() => setShowAddEvent(false)}
-          />
-          <SafeAreaView className="bg-white rounded-t-xl w-full shadow-xl flex items-center justify-start h-2/3">
-            <View className="flex items-center justify-center w-full p-4">
-              <Text className="text-xl font-thick color-black">Add Event</Text>
-              <TextInput
-                className="bg-lightGrey p-2 m-2 rounded-full w-1/2"
-                placeholder="Event"
-                value={event}
-                onChangeText={(text) => setEvent(text)}
-              />
-              <TouchableOpacity
-                className="bg-secondary p-2 rounded-full mt-4 flex items-center justify-center"
-                onPress={() => {
-                  addEvent(date, event);
-                  setShowAddEvent(false);
-                }}
-              >
-                <Text className="text-xl font-thin">Add</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text
-                  className="text-xl font-thin"
-                  onPress={() => setShowAddEvent(false)}
-                >
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        </View>
-      </Modal>
-    </Modal>
-  );
-};
 
 export const Calendar = () => {
   const { userData } = useContext(AuthContext);
@@ -187,25 +122,26 @@ export const Calendar = () => {
           </View>
         )}
       </View>
-      <View className="bg-offwhite p-4 flex justify-center items-center">
+      <View className="bg-offWhite p-4 flex-1 justify-start items-center">
         {userData.events &&
           userData.events
             .filter((event) => {
               if (selectedOption === "day") {
                 return (
-                  new Date(event.date).toDateString() === date.toDateString()
+                  new Date(event.startDateTime).toDateString() ===
+                  date.toDateString()
                 );
               } else {
                 return (
-                  new Date(event.date).getMonth() === date.getMonth() &&
-                  new Date(event.date).getFullYear() === date.getFullYear()
+                  new Date(event.startDateTime).getMonth() ===
+                    date.getMonth() &&
+                  new Date(event.startDateTime).getFullYear() ===
+                    date.getFullYear()
                 );
               }
             })
             .map((event, index) => {
-              return (
-                <Event key={index} event={event} />
-              );
+              return <Event key={index} event={event} />;
             })}
       </View>
       <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">

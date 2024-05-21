@@ -17,7 +17,7 @@ export const Event = ({ event }) => {
   return (
     <Menu className="mb-2">
       <MenuTrigger customStyles={triggerStyles}>
-        <Text className="text-xl font-thin">{event.event}</Text>
+        <Text className="text-xl font-thin">{event.title}</Text>
       </MenuTrigger>
       <MenuOptions customStyles={optionsStyles}>
         <MenuOption onSelect={() => alert(`Edit`)} text="Edit" />

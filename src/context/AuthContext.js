@@ -172,22 +172,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Add event function
-  const addEvent = (date, event) => {
-    const newEvent = {
-      date: date.toISOString(),
-      time: date.toLocaleTimeString("en-GB"),
-      event: event,
-    };
-
+  const addEvent = (event) => {
     setUserData({
       ...userData,
-      events: [...userData.events, newEvent],
+      events: [...userData.events, event],
     });
     AsyncStorage.setItem("userData", JSON.stringify(userData));
 
     // Update user data in Firestore
     updateDoc(doc(usersRef, userToken), {
-      events: [...userData.events, newEvent],
+      events: [...userData.events, event],
     }).catch((error) => {
       console.error("Error updating document: ", error);
     });
