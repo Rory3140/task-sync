@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   SafeAreaView,
   Text,
@@ -12,19 +12,34 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { Event } from "../components/Event";
+import { EventsList } from "../components/EventsList";
+import { Timetable } from "../components/Timetable";
 import { AddEvent } from "../components/AddEvent";
-import { AuthContext } from "../context/AuthContext";
 
 import { colors } from "../utils/colors";
 
 export const Calendar = () => {
-  const { userData } = useContext(AuthContext);
-
   const [date, setDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("day");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [blockHeight, setBlockHeight] = useState(0);
+  const scrollViewRef = useRef(null);
+
+  useEffect(() => {
+    if (date.toDateString() === new Date().toDateString()) {
+      if (blockHeight > 0) {
+        const currentHour = new Date().getHours();
+        const scrollToPosition = currentHour * blockHeight;
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({
+            y: scrollToPosition,
+            animated: true,
+          });
+        }
+      }
+    }
+  }, [date, blockHeight]);
 
   function incrementDate() {
     if (selectedOption === "month") {
@@ -123,32 +138,16 @@ export const Calendar = () => {
           </View>
         )}
       </View>
-      <ScrollView className="bg-offWhite p-4 flex-1 w-full">
-        {userData.events &&
-          userData.events
-            .filter((event) => {
-              if (selectedOption === "day") {
-                return (
-                  new Date(event.startDateTime).toDateString() ===
-                  date.toDateString()
-                );
-              } else {
-                return (
-                  new Date(event.startDateTime).getMonth() ===
-                    date.getMonth() &&
-                  new Date(event.startDateTime).getFullYear() ===
-                    date.getFullYear()
-                );
-              }
-            })
-            .sort((a, b) => {
-              return new Date(a.startDateTime) - new Date(b.startDateTime);
-            })
-            .map((event, index) => {
-              return <Event key={index} event={event} />;
-            })}
+
+      <ScrollView className="bg-offWhite p-4 flex-1 w-full" ref={scrollViewRef}>
+        {selectedOption === "day" ? (
+          <Timetable date={date} blockHeight={blockHeight} setBlockHeight={setBlockHeight} />
+        ) : (
+          <EventsList date={date} selectedOption={selectedOption} />
+        )}
         <View className="h-24" />
       </ScrollView>
+
       <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
         <TouchableOpacity
           className="bg-secondary py-2 px-10 rounded-full m-2 flex items-center justify-center"

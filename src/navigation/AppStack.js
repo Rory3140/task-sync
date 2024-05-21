@@ -29,7 +29,7 @@ export const AppStack = () => {
     >
       <Drawer.Screen name="Calendar" component={Calendar} />
       <Drawer.Screen name="Settings" component={Settings} />
-      <Drawer.Screen name="Example" component={Example} />
+      {/* <Drawer.Screen name="Example" component={Example} /> */}
     </Drawer.Navigator>
   );
 };

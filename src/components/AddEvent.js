@@ -12,10 +12,13 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { AuthContext } from "../context/AuthContext";
 
+import { calendarColors, colors } from "../utils/colors";
+
 export const AddEvent = ({ date, setShowAddEvent }) => {
   const { addEvent } = useContext(AuthContext);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
+  const [eventColor, setEventColor] = useState(calendarColors.white);
 
   const [startDateTime, setStartDateTime] = useState(date);
   const [endDateTime, setEndDateTime] = useState(date);
@@ -41,6 +44,7 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
       location,
       startDateTime: newStartDateTime,
       endDateTime: newEndDateTime,
+      color: eventColor,
     });
     setShowAddEvent(false);
   }
@@ -96,6 +100,7 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                       className="w-full h-8"
                       placeholder="Event Title"
                       value={title}
+                      placeholderTextColor={colors.grey}
                       onChangeText={(text) => setTitle(text)}
                     />
                   </View>
@@ -104,6 +109,7 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                     <TextInput
                       className="w-full h-8"
                       placeholder="Location"
+                      placeholderTextColor={colors.grey}
                       value={location}
                       onChangeText={(text) => setLocation(text)}
                     />
@@ -120,6 +126,8 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                         value={startDateTime}
                         mode="date"
                         display="calendar"
+                        accentColor={colors.primary}
+                        themeVariant="light"
                         onChange={(event, selectedDate) => {
                           if (selectedDate) {
                             setStartDateTime(selectedDate);
@@ -137,6 +145,8 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                         value={startDateTime}
                         mode="time"
                         display="default"
+                        accentColor={colors.primary}
+                        themeVariant="light"
                         minuteInterval={5}
                         onChange={(event, selectedDate) => {
                           if (selectedDate) {
@@ -163,6 +173,8 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                         value={endDateTime}
                         mode="date"
                         display="calendar"
+                        accentColor={colors.primary}
+                        themeVariant="light"
                         onChange={(event, selectedDate) => {
                           if (selectedDate) {
                             if (selectedDate < startDateTime) {
@@ -176,6 +188,8 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                         value={endDateTime}
                         mode="time"
                         display="default"
+                        accentColor={colors.primary}
+                        themeVariant="light"
                         minuteInterval={5}
                         onChange={(event, selectedDate) => {
                           if (selectedDate) {
@@ -186,6 +200,31 @@ export const AddEvent = ({ date, setShowAddEvent }) => {
                           }
                         }}
                       />
+                    </View>
+                  </View>
+                </View>
+
+                <View className="flex items-center justify-center rounded-xl w-full m-4 bg-white">
+                  <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
+                    <Text className="text-l font-thick color-black">
+                      Event Color
+                    </Text>
+                    <View className="flex-row items-center justify-between">
+                      {Object.values(calendarColors).map((color) => (
+                        <TouchableOpacity
+                          key={color}
+                          onPress={() => setEventColor(color)}
+                        >
+                          <View
+                            className={`w-6 h-6 rounded-full m-1 ${
+                              color === eventColor
+                                ? "border-2 border-black"
+                                : "border-2 border-lightGrey"
+                            }`}
+                            style={{ backgroundColor: color }}
+                          />
+                        </TouchableOpacity>
+                      ))}
                     </View>
                   </View>
                 </View>

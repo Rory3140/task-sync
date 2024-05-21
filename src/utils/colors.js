@@ -8,3 +8,14 @@ export const colors = {
   primary: "#AD40AF",
   secondary: "#E6E6FA",
 };
+
+export const calendarColors = {
+  white: "#FFFFFF",
+  red: "#FFCCCC",
+  orange: "#FFD8B8",
+  yellow: "#FFFFCC",
+  green: "#CCFFCC",
+  blue: "#CCCCFF",
+  indigo: "#E6E6FA",
+  violet: "#F5E6F5",
+};

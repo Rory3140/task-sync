@@ -14,6 +14,49 @@ import { colors } from "../utils/colors";
 export const Event = ({ event }) => {
   const { deleteEvent } = useContext(AuthContext);
 
+  const TRIGGER_WIDTH = 350;
+  const OPTIONS_WIDTH = 150;
+
+  const triggerStyles = {
+    triggerWrapper: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: event.color || colors.white,
+      padding: 10,
+      borderRadius: 5,
+      width: TRIGGER_WIDTH,
+      height: 60,
+    },
+    triggerTouchable: {
+      style: {
+        borderRadius: 5,
+        width: TRIGGER_WIDTH,
+      },
+    },
+  };
+
+  const optionsStyles = {
+    optionsContainer: {
+      backgroundColor: colors.white,
+      padding: 5,
+      width: OPTIONS_WIDTH,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 10,
+      marginLeft: (TRIGGER_WIDTH - OPTIONS_WIDTH) / 2,
+    },
+    optionsWrapper: {
+      backgroundColor: colors.white,
+    },
+    optionWrapper: {
+      backgroundColor: colors.white,
+      margin: 5,
+    },
+    optionText: {
+      color: colors.black,
+    },
+  };
+
   return (
     <Menu className="mb-2">
       <MenuTrigger customStyles={triggerStyles}>
@@ -46,47 +89,4 @@ export const Event = ({ event }) => {
       </MenuOptions>
     </Menu>
   );
-};
-
-const TRIGGER_WIDTH = 350;
-const OPTIONS_WIDTH = 150;
-
-const triggerStyles = {
-  triggerWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.white,
-    padding: 10,
-    borderRadius: 5,
-    width: TRIGGER_WIDTH,
-    height: 60,
-  },
-  triggerTouchable: {
-    style: {
-      borderRadius: 5,
-      width: TRIGGER_WIDTH,
-    },
-  },
-};
-
-const optionsStyles = {
-  optionsContainer: {
-    backgroundColor: colors.white,
-    padding: 5,
-    width: OPTIONS_WIDTH,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 10,
-    marginLeft: (TRIGGER_WIDTH - OPTIONS_WIDTH) / 2,
-  },
-  optionsWrapper: {
-    backgroundColor: colors.white,
-  },
-  optionWrapper: {
-    backgroundColor: colors.white,
-    margin: 5,
-  },
-  optionText: {
-    color: colors.black,
-  },
 };
