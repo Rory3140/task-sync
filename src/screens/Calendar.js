@@ -5,22 +5,90 @@ import {
   TouchableOpacity,
   View,
   Platform,
+  Modal,
+  TextInput,
 } from "react-native";
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import { Event } from "../components/Event";
 import { AuthContext } from "../context/AuthContext";
 
 import { colors } from "../utils/colors";
 
+const AddEvent = ({ date, setShowAddEvent }) => {
+  const { addEvent } = useContext(AuthContext);
+  const [event, setEvent] = useState("");
+
+  return (
+    <Modal
+      animationType="none"
+      transparent={true}
+      visible={true}
+      onRequestClose={() => {
+        setShowAddEvent(false);
+      }}
+    >
+      <View
+        className="w-full h-full absolute bg-black opacity-50"
+        onPress={() => setShowAddEvent(false)}
+      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={true}
+        onRequestClose={() => {
+          setShowAddEvent(false);
+        }}
+      >
+        <View className="flex-1 items-center justify-end">
+          <TouchableOpacity
+            className="w-full h-full absolute"
+            onPress={() => setShowAddEvent(false)}
+          />
+          <SafeAreaView className="bg-white rounded-t-xl w-full shadow-xl flex items-center justify-start h-2/3">
+            <View className="flex items-center justify-center w-full p-4">
+              <Text className="text-xl font-thick color-black">Add Event</Text>
+              <TextInput
+                className="bg-lightGrey p-2 m-2 rounded-full w-1/2"
+                placeholder="Event"
+                value={event}
+                onChangeText={(text) => setEvent(text)}
+              />
+              <TouchableOpacity
+                className="bg-secondary p-2 rounded-full mt-4 flex items-center justify-center"
+                onPress={() => {
+                  addEvent(date, event);
+                  setShowAddEvent(false);
+                }}
+              >
+                <Text className="text-xl font-thin">Add</Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text
+                  className="text-xl font-thin"
+                  onPress={() => setShowAddEvent(false)}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
+      </Modal>
+    </Modal>
+  );
+};
+
 export const Calendar = () => {
-  const { userData, addEvent } = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
 
   const [date, setDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("day");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showAddEvent, setShowAddEvent] = useState(false);
 
   function incrementDate() {
     if (selectedOption === "month") {
@@ -39,7 +107,10 @@ export const Calendar = () => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      className="flex-1 bg-offwhite"
+      onPress={() => setShowDatePicker(false)}
+    >
       <View
         className="bg-white p-2 flex justify-between items-center"
         style={{ borderBottomWidth: 0.5, borderBottomColor: colors.lightGrey }}
@@ -117,8 +188,8 @@ export const Calendar = () => {
         )}
       </View>
       <View className="bg-offwhite p-4 flex justify-center items-center">
-        {userData.dates &&
-          userData.dates
+        {userData.events &&
+          userData.events
             .filter((event) => {
               if (selectedOption === "day") {
                 return (
@@ -133,27 +204,21 @@ export const Calendar = () => {
             })
             .map((event, index) => {
               return (
-                <View
-                  key={index}
-                  className="bg-white p-2 m-2 rounded-full flex items-center justify-between w-full"
-                  style={{
-                    borderBottomWidth: 0.5,
-                    borderBottomColor: colors.lightGrey,
-                  }}
-                >
-                  <Text className="text-xl font-thin">{event.event}</Text>
-                </View>
+                <Event key={index} event={event} />
               );
             })}
+      </View>
+      <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
         <TouchableOpacity
-          className="bg-secondary p-2 rounded-full mt-4 flex items-center justify-center"
-          onPress={() => {
-            addEvent(date, new Date().toLocaleTimeString());
-          }}
+          className="bg-secondary py-2 px-10 rounded-full m-2 flex items-center justify-center"
+          onPress={() => setShowAddEvent(true)}
         >
-          <Ionicons name="add" color={colors.primary} size={30} />
+          <Ionicons name="add" color={colors.primary} size={40} />
         </TouchableOpacity>
       </View>
+      {showAddEvent && (
+        <AddEvent date={date} setShowAddEvent={setShowAddEvent} />
+      )}
     </SafeAreaView>
   );
 };

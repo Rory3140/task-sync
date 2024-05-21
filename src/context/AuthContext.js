@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   const usersRef = collection(db, "users");
 
-  // Fetch the data from AsyncStorage when the app starts
+  // Fetch the data from AsyncStorage and Firestore when the app starts
   useEffect(() => {
     setInitializing(true);
     AsyncStorage.getItem("userToken")
@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
+        // Get user data from firestore after login
         setUserToken(token);
         getDoc(doc(usersRef, token))
           .then((docSnap) => {
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       });
   }, []);
 
+  // Login function
   const login = (email, password, setPassword) => {
     setIsLoading(true);
     signInWithEmailAndPassword(auth, email, password)
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         setUserToken(userCredential.user.uid);
         AsyncStorage.setItem("userToken", userCredential.user.uid);
 
-        // Get user data from firestore
+        // Get user data from firestore after login
         getDoc(doc(usersRef, userCredential.user.uid))
           .then((docSnap) => {
             if (docSnap.exists()) {
@@ -93,6 +95,7 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  // Logout function
   const logout = () => {
     setIsLoading(true);
     setTimeout(() => {
@@ -105,6 +108,7 @@ export const AuthProvider = ({ children }) => {
     }, 1000);
   };
 
+  // Signup function
   const signup = (
     email,
     displayName,
@@ -122,7 +126,7 @@ export const AuthProvider = ({ children }) => {
         setDoc(doc(usersRef, userCredential.user.uid), {
           email: email,
           displayName: displayName,
-          dates: [],
+          events: [],
         })
           .then(() => {
             setIsLoading(false);
@@ -131,11 +135,12 @@ export const AuthProvider = ({ children }) => {
             console.error("Error writing document: ", error);
             setIsLoading(false);
           });
+
         // Set user data locally
         setUserData({
           email: email,
           displayName: displayName,
-          dates: [],
+          events: [],
         });
         AsyncStorage.setItem("userData", JSON.stringify(userData));
       })
@@ -166,28 +171,44 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  // Add event function
   const addEvent = (date, event) => {
-    const newDate = {
+    const newEvent = {
       date: date.toISOString(),
+      time: date.toLocaleTimeString("en-GB"),
       event: event,
     };
 
     setUserData({
       ...userData,
-      dates: [...userData.dates, newDate],
+      events: [...userData.events, newEvent],
     });
     AsyncStorage.setItem("userData", JSON.stringify(userData));
 
-    // Update user data in firestore
+    // Update user data in Firestore
     updateDoc(doc(usersRef, userToken), {
-      dates: [...userData.dates, newDate],
-    })
-      .then(() => {
-        console.log("Document successfully updated!");
-      })
-      .catch((error) => {
-        console.error("Error updating document: ", error);
-      });
+      events: [...userData.events, newEvent],
+    }).catch((error) => {
+      console.error("Error updating document: ", error);
+    });
+  };
+
+  // Delete event function
+  const deleteEvent = (event) => {
+    const newEvents = userData.events.filter((e) => e !== event);
+
+    setUserData({
+      ...userData,
+      events: newEvents,
+    });
+    AsyncStorage.setItem("userData", JSON.stringify(userData));
+
+    // Update user data in Firestore
+    updateDoc(doc(usersRef, userToken), {
+      events: newEvents,
+    }).catch((error) => {
+      console.error("Error updating document: ", error);
+    });
   };
 
   return (
@@ -201,6 +222,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         signup,
         addEvent,
+        deleteEvent,
       }}
     >
       {children}

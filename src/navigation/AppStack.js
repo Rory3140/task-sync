@@ -3,6 +3,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { Calendar } from "../screens/Calendar";
 import { Settings } from "../screens/Settings";
+import { Example } from "../screens/Example";
 
 import { colors } from "../utils/colors";
 
@@ -28,6 +29,7 @@ export const AppStack = () => {
     >
       <Drawer.Screen name="Calendar" component={Calendar} />
       <Drawer.Screen name="Settings" component={Settings} />
+      <Drawer.Screen name="Example" component={Example} />
     </Drawer.Navigator>
   );
 };
