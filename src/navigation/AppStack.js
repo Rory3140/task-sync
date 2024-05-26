@@ -2,8 +2,8 @@ import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { Calendar } from "../screens/Calendar";
-import { Settings } from "../screens/Settings";
-import { Example } from "../screens/Example";
+import { Settings } from "../screens/Settings.js";
+import Example from "../screens/Example";
 
 import { colors } from "../utils/colors";
 

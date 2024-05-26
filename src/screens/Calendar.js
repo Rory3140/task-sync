@@ -15,16 +15,17 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { EventsList } from "../components/EventsList";
 import { Timetable } from "../components/Timetable";
-import { AddEvent } from "../components/AddEvent";
+import { AddEventModal } from "../components/AddEventModal";
 
 import { colors } from "../utils/colors";
 
 export const Calendar = () => {
   const [date, setDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("day");
-  const [showAddEvent, setShowAddEvent] = useState(false);
   const [blockHeight, setBlockHeight] = useState(0);
   const [datePickerHeight, setDatePickerHeight] = useState(0);
+
+  const addEventRef = useRef(null);
   const scrollViewRef = useRef(null);
 
   const animatedHeight = useSharedValue(95);
@@ -170,15 +171,14 @@ export const Calendar = () => {
 
       <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
         <TouchableOpacity
-          className="bg-secondary py-2 px-10 rounded-full m-2 flex items-center justify-center"
-          onPress={() => setShowAddEvent(true)}
+          className="bg-secondary py-2 px-10 rounded-full m-2 flex-row items-center justify-around"
+          onPress={() => addEventRef.current?.present()}
         >
           <Ionicons name="add" color={colors.primary} size={40} />
+          <Text className="text-xl font-thick color-primary">Add Event</Text>
         </TouchableOpacity>
       </View>
-      {showAddEvent && (
-        <AddEvent date={date} setShowAddEvent={setShowAddEvent} />
-      )}
+      <AddEventModal ref={addEventRef} date={date} />
     </SafeAreaView>
   );
 };
