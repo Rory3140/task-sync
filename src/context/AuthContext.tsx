@@ -8,7 +8,7 @@ import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 import { auth, db } from "../../firebase.config";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);

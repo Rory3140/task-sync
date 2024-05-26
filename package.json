@@ -25,7 +25,10 @@
     "react-native-popup-menu": "^0.16.1",
     "react-native-reanimated": "~3.10.1",
     "react-native-switch-selector": "^2.3.0",
-    "react-native-vector-icons": "^10.0.3"
+    "react-native-vector-icons": "^10.0.3",
+    "@gorhom/bottom-sheet": "4",
+    "typescript": "~5.3.3",
+    "@types/react": "~18.2.79"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
