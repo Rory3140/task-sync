@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import { Text, TouchableOpacity, View, TextInput } from "react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import BottomSheet from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { AuthContext } from "../context/AuthContext";
@@ -19,7 +19,7 @@ export const AddEventModal = forwardRef((props, ref) => {
   const { addEvent } = useContext(AuthContext);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
-  const [eventColor, setEventColor] = useState(calendarColors.white);
+  const [eventColor, setEventColor] = useState(calendarColors.violet);
 
   const [startDateTime, setStartDateTime] = useState(date);
   const [endDateTime, setEndDateTime] = useState(date);
@@ -34,7 +34,13 @@ export const AddEventModal = forwardRef((props, ref) => {
     );
     setStartDateTime(roundedDownDate);
     setEndDateTime(new Date(roundedDownDate.getTime() + 60 * 60 * 1000));
-  }, []);
+  }, [date]);
+
+  function resetStates() {
+    setTitle("");
+    setLocation("");
+    setEventColor(calendarColors.red);
+  }
 
   function createEvent() {
     const newStartDateTime = startDateTime.toISOString();
@@ -52,7 +58,13 @@ export const AddEventModal = forwardRef((props, ref) => {
 
   const snapPoints = useMemo(() => ["50%", "75%"], []);
   return (
-    <BottomSheetModal ref={ref} index={0} snapPoints={snapPoints}>
+    <BottomSheet
+      ref={ref}
+      index={-1}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+      onClose={() => resetStates()}
+    >
       <View className="bg-white rounded-t-xl w-full flex items-center justify-start h-full">
         <View className="flex items-center justify-center w-full px-4">
           <View className="flex-row items-center justify-between w-full">
@@ -200,6 +212,6 @@ export const AddEventModal = forwardRef((props, ref) => {
           </View>
         </View>
       </View>
-    </BottomSheetModal>
+    </BottomSheet>
   );
 });

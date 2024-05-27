@@ -3,10 +3,10 @@ import { View } from "react-native";
 
 import { Event } from "../components/Event";
 
-import { getEvents } from "../utils/functions";
+import { getEventsByMonth } from "../utils/functions";
 
-export const EventsList = ({ date, selectedOption }) => {
-  const events = getEvents(date, selectedOption);
+export const EventsList = ({ date }) => {
+  const events = getEventsByMonth(date);
 
   return (
     <View>

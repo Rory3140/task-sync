@@ -10,12 +10,10 @@ export const colors = {
 };
 
 export const calendarColors = {
-  white: "#FFFFFF",
-  red: "#FFCCCC",
-  orange: "#FFD8B8",
-  yellow: "#FFFFCC",
-  green: "#CCFFCC",
+  violet: "#E6E6FA",
   blue: "#CCCCFF",
-  indigo: "#E6E6FA",
-  violet: "#F5E6F5",
+  green: "#CCFFCC",
+  yellow: "#FFFFCC",
+  orange: "#FFD8B8",
+  red: "#FFCCCC",
 };
