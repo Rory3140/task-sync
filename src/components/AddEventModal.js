@@ -39,7 +39,7 @@ export const AddEventModal = forwardRef((props, ref) => {
   function resetStates() {
     setTitle("");
     setLocation("");
-    setEventColor(calendarColors.red);
+    setEventColor(calendarColors.violet);
   }
 
   function createEvent() {

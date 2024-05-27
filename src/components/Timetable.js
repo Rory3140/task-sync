@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Text, View } from "react-native";
 
+import { Event } from "../components/Event";
+
 import { getEventsByDay } from "../utils/functions";
 import { colors } from "../utils/colors";
 
-const Event = ({ event, blockHeight }) => {
-  const { title, startDateTime, endDateTime, color } = event;
+const EventWrapper = ({ event, blockHeight }) => {
+  const { startDateTime, endDateTime } = event;
 
   const startHours = new Date(startDateTime).getHours();
   const startMinutes = new Date(startDateTime).getMinutes();
@@ -21,18 +23,12 @@ const Event = ({ event, blockHeight }) => {
 
   return (
     <View
+      className="absolute opacity-80 w-full"
       style={{
-        backgroundColor: color,
-        height: eventHeight,
-        borderRadius: 5,
-        padding: 5,
-        opacity: 0.8,
-        position: "absolute",
-        width: "100%",
         top: eventTop,
       }}
     >
-      <Text className="color-black font-bold text-lg">{title}</Text>
+      <Event event={event} height={eventHeight} />
     </View>
   );
 };
@@ -92,7 +88,9 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
       )}
       <View className="absolute right-0 w-5/6 h-full">
         {events.map((event, index) => {
-          return <Event key={index} event={event} blockHeight={blockHeight} />;
+          return (
+            <EventWrapper key={index} event={event} blockHeight={blockHeight} />
+          );
         })}
       </View>
     </View>

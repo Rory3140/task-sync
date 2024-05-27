@@ -39,21 +39,38 @@ export function getEventsByDay(date) {
     });
 }
 
-
 export function getEventsByMonth(date) {
   const { userData } = useContext(AuthContext);
-  if (!userData.events) {
+  if (!userData || !userData.events) {
     return [];
   }
 
-  return userData.events
+  const filteredEvents = userData.events
     .filter((event) => {
+      const eventDate = new Date(event.startDateTime);
       return (
-        new Date(event.startDateTime).getMonth() === date.getMonth() &&
-        new Date(event.startDateTime).getFullYear() === date.getFullYear()
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear()
       );
     })
-    .sort((a, b) => {
-      return new Date(a.startDateTime) - new Date(b.startDateTime);
-    });
+    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
+
+  const eventsByDay = [];
+
+  filteredEvents.forEach((event) => {
+    const eventDate = new Date(event.startDateTime).getDate();
+    if (!eventsByDay[eventDate]) {
+      eventsByDay[eventDate] = [];
+    }
+    eventsByDay[eventDate].push(event);
+  });
+
+  // Ensure the result is an array of arrays
+  for (let i = 0; i < 31; i++) {
+    if (!eventsByDay[i]) {
+      eventsByDay[i] = [];
+    }
+  }
+
+  return eventsByDay;
 }

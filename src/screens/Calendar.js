@@ -31,7 +31,10 @@ export const Calendar = () => {
   const animatedHeight = useSharedValue(95);
 
   useEffect(() => {
-    if (date.toDateString() === new Date().toDateString()) {
+    if (
+      selectedOption === "day" &&
+      date.toDateString() === new Date().toDateString()
+    ) {
       if (blockHeight > 0) {
         const currentHour = new Date().getHours();
         const scrollToPosition = currentHour * blockHeight;
@@ -43,7 +46,7 @@ export const Calendar = () => {
         }
       }
     }
-  }, [date, blockHeight]);
+  }, [date, selectedOption]);
 
   useEffect(() => {
     addEventRef.current?.close();

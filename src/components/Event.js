@@ -11,10 +11,10 @@ import { AuthContext } from "../context/AuthContext";
 
 import { colors } from "../utils/colors";
 
-export const Event = ({ event }) => {
+export const Event = ({ event, height }) => {
   const { deleteEvent } = useContext(AuthContext);
 
-  const TRIGGER_WIDTH = 350;
+  const TRIGGER_WIDTH = 300;
   const OPTIONS_WIDTH = 150;
 
   const triggerStyles = {
@@ -24,13 +24,12 @@ export const Event = ({ event }) => {
       backgroundColor: event.color || colors.white,
       padding: 10,
       borderRadius: 5,
-      width: TRIGGER_WIDTH,
-      height: 60,
+      height: height || 60,
     },
     triggerTouchable: {
       style: {
         borderRadius: 5,
-        width: TRIGGER_WIDTH,
+        width: "100%",
       },
     },
   };
