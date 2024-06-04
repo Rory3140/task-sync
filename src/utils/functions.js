@@ -74,3 +74,4 @@ export function getEventsByMonth(date) {
 
   return eventsByDay;
 }
+

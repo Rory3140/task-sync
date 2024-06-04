@@ -6,7 +6,35 @@ import { Event } from "../components/Event";
 import { getEventsByDay } from "../utils/functions";
 import { colors } from "../utils/colors";
 
-const EventWrapper = ({ event, blockHeight }) => {
+function groupOverlappingEvents(events) {
+  const groups = [];
+
+  events.forEach((event) => {
+    let added = false;
+    for (let group of groups) {
+      if (group.some((e) => checkOverlap(e, event))) {
+        group.push(event);
+        added = true;
+        break;
+      }
+    }
+    if (!added) {
+      groups.push([event]);
+    }
+  });
+
+  return groups;
+}
+
+function checkOverlap(event1, event2) {
+  const start1 = new Date(event1.startDateTime);
+  const end1 = new Date(event1.endDateTime);
+  const start2 = new Date(event2.startDateTime);
+  const end2 = new Date(event2.endDateTime);
+  return start1 < end2 && start2 < end1;
+}
+
+const EventWrapper = ({ event, blockHeight, width, left }) => {
   const { startDateTime, endDateTime } = event;
 
   const startHours = new Date(startDateTime).getHours();
@@ -16,16 +44,17 @@ const EventWrapper = ({ event, blockHeight }) => {
 
   const eventDuration =
     (endHours - startHours) * 60 + (endMinutes - startMinutes);
-
   const eventHeight = (eventDuration / 60) * blockHeight;
-
   const eventTop = (startHours * 60 + startMinutes) * (blockHeight / 60);
 
   return (
     <View
-      className="absolute opacity-80 w-full"
+      className="absolute opacity-80"
       style={{
         top: eventTop,
+        height: eventHeight,
+        width: `${width}%`,
+        left: `${left}%`,
       }}
     >
       <Event event={event} height={eventHeight} />
@@ -46,7 +75,6 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
     const currentPosition =
       currentHours * blockHeight + (currentMinutes / 60) * blockHeight;
 
-    // Check if the provided date is today
     const isToday =
       date.getDate() === currentDate.getDate() &&
       date.getMonth() === currentDate.getMonth() &&
@@ -58,6 +86,23 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
       setCurrentTimePosition(null);
     }
   }, [date, blockHeight]);
+
+  const groups = groupOverlappingEvents(events);
+
+  const adjustedEvents = groups.flatMap((group) => {
+    const numberOfColumns = group.length;
+    return group.map((event, index) => {
+      const column = index % numberOfColumns;
+      const columnWidth = 100 / numberOfColumns;
+      const leftPosition = column * columnWidth;
+
+      return {
+        ...event,
+        width: columnWidth,
+        left: leftPosition,
+      };
+    });
+  });
 
   return (
     <View className="w-full h-full">
@@ -87,11 +132,15 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
         />
       )}
       <View className="absolute right-0 w-5/6 h-full">
-        {events.map((event, index) => {
-          return (
-            <EventWrapper key={index} event={event} blockHeight={blockHeight} />
-          );
-        })}
+        {adjustedEvents.map((event, index) => (
+          <EventWrapper
+            key={index}
+            event={event}
+            blockHeight={blockHeight}
+            width={event.width}
+            left={event.left}
+          />
+        ))}
       </View>
     </View>
   );
