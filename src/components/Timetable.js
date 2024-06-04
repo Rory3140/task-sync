@@ -34,6 +34,41 @@ function checkOverlap(event1, event2) {
   return start1 < end2 && start2 < end1;
 }
 
+function calculatePositions(groups) {
+  const adjustedEvents = [];
+  groups.forEach((group) => {
+    const sortedGroup = group.sort(
+      (a, b) => new Date(a.startDateTime) - new Date(b.startDateTime)
+    );
+
+    const columns = [];
+    sortedGroup.forEach((event) => {
+      let placed = false;
+      for (let colIndex = 0; colIndex < columns.length; colIndex++) {
+        if (!columns[colIndex].some((e) => checkOverlap(e, event))) {
+          columns[colIndex].push(event);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        columns.push([event]);
+      }
+    });
+
+    const numColumns = columns.length;
+    columns.forEach((column, colIndex) => {
+      const columnWidth = 100 / numColumns;
+      const left = colIndex * columnWidth;
+      column.forEach((event) => {
+        adjustedEvents.push({ ...event, width: columnWidth, left });
+      });
+    });
+  });
+
+  return adjustedEvents;
+}
+
 const EventWrapper = ({ event, blockHeight, width, left }) => {
   const { startDateTime, endDateTime } = event;
 
@@ -89,20 +124,7 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
 
   const groups = groupOverlappingEvents(events);
 
-  const adjustedEvents = groups.flatMap((group) => {
-    const numberOfColumns = group.length;
-    return group.map((event, index) => {
-      const column = index % numberOfColumns;
-      const columnWidth = 100 / numberOfColumns;
-      const leftPosition = column * columnWidth;
-
-      return {
-        ...event,
-        width: columnWidth,
-        left: leftPosition,
-      };
-    });
-  });
+  const adjustedEvents = calculatePositions(groups);
 
   return (
     <View className="w-full h-full">
