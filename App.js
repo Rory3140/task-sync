@@ -2,7 +2,6 @@ import React from "react";
 import "react-native-reanimated";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MenuProvider } from "react-native-popup-menu";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { StatusBar } from "react-native";
 
@@ -14,10 +13,8 @@ export default function App() {
     <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
-          <MenuProvider>
             <StatusBar barStyle="dark-content" />
             <AppNav />
-          </MenuProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </AuthProvider>

@@ -36,17 +36,19 @@ export const Calendar = () => {
       date.toDateString() === new Date().toDateString()
     ) {
       if (blockHeight > 0) {
-        const currentHour = new Date().getHours();
-        const scrollToPosition = currentHour * blockHeight;
-        if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({
-            y: scrollToPosition,
-            animated: true,
-          });
-        }
+        setTimeout(() => {
+          const currentHour = new Date().getHours();
+          const scrollToPosition = currentHour * blockHeight;
+          if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({
+              y: scrollToPosition,
+              animated: false,
+            });
+          }
+        }, 10);
       }
     }
-  }, [date, selectedOption]);
+  }, [date, blockHeight, selectedOption]);
 
   useEffect(() => {
     addEventRef.current?.close();

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Text, View } from "react-native";
 
-import { Event } from "../components/Event";
+import { Event } from "./Event";
 
 import { getEventsByDay } from "../utils/functions";
 import { colors } from "../utils/colors";
 
+// Function to group overlapping events
 function groupOverlappingEvents(events) {
   const groups = [];
 
@@ -26,14 +27,7 @@ function groupOverlappingEvents(events) {
   return groups;
 }
 
-function checkOverlap(event1, event2) {
-  const start1 = new Date(event1.startDateTime);
-  const end1 = new Date(event1.endDateTime);
-  const start2 = new Date(event2.startDateTime);
-  const end2 = new Date(event2.endDateTime);
-  return start1 < end2 && start2 < end1;
-}
-
+// Function to calculate the positions of the events
 function calculatePositions(groups) {
   const adjustedEvents = [];
   groups.forEach((group) => {
@@ -67,6 +61,15 @@ function calculatePositions(groups) {
   });
 
   return adjustedEvents;
+}
+
+// Function to check if two events overlap
+function checkOverlap(event1, event2) {
+  const start1 = new Date(event1.startDateTime);
+  const end1 = new Date(event1.endDateTime);
+  const start2 = new Date(event2.startDateTime);
+  const end2 = new Date(event2.endDateTime);
+  return start1 < end2 && start2 < end1;
 }
 
 const EventWrapper = ({ event, blockHeight, width, left }) => {
@@ -135,7 +138,7 @@ export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
             const { height } = event.nativeEvent.layout;
             setBlockHeight(height);
           }}
-          className="flex-column items-center justify-start w-full h-16"
+          className="flex-column items-center justify-start w-full h-20"
         >
           <View className="flex-row items-start justify-between w-full h-4">
             <View className="w-1/6 flex-row items-center justify-start">
