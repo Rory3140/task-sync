@@ -5,14 +5,14 @@ import { Event } from "./Event";
 
 import { getEventsByMonth } from "../utils/functions";
 
-export const EventsList = ({ date }) => {
+export const EventsList = ({ date, navigation }) => {
   const eventsByDay = getEventsByMonth(date);
 
   return (
     <View>
       {eventsByDay.map((eventsOnDay, dayIndex) => {
         if (eventsOnDay.length === 0) {
-          return null; // Skip days with no events
+          return null;
         }
 
         return (
@@ -26,7 +26,7 @@ export const EventsList = ({ date }) => {
             </Text>
             <View className="w-full bg-lightGrey h-0.5 rounded-full mb-2" />
             {eventsOnDay.map((event, eventIndex) => (
-              <Event key={eventIndex} event={event} />
+              <Event key={eventIndex} event={event} navigation={navigation} />
             ))}
           </View>
         );

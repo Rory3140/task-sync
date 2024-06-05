@@ -24,7 +24,7 @@ import { AddEventModal } from "../components/AddEventModal";
 
 import { colors } from "../utils/colors";
 
-export const Calendar = () => {
+export const Calendar = ({navigation}) => {
   const [date, setDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
@@ -50,7 +50,7 @@ export const Calendar = () => {
               animated: false,
             });
           }
-        }, 10);
+        }, 0);
       }
     }
   }, [date, blockHeight, selectedOption]);
@@ -195,9 +195,10 @@ export const Calendar = () => {
                 date={date}
                 blockHeight={blockHeight}
                 setBlockHeight={setBlockHeight}
+                navigation={navigation}
               />
             ) : (
-              <EventsList date={date} />
+              <EventsList date={date} navigation={navigation} />
             )}
             <View className="h-24" />
           </ScrollView>

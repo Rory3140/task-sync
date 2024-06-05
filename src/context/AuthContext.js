@@ -171,31 +171,50 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  // Custom function to generate unique IDs
+  const generateUniqueId = () => {
+    return `${Math.random().toString(36).substr(2, 9)}-${Date.now().toString(
+      36
+    )}`;
+  };
+
   // Add event function
   const addEvent = (event) => {
+    const eventWithId = { ...event, id: generateUniqueId() }; // Add unique ID to the event
+
+    const updatedEvents = [...userData.events, eventWithId];
+
     setUserData({
       ...userData,
-      events: [...userData.events, event],
+      events: updatedEvents,
     });
-    AsyncStorage.setItem("userData", JSON.stringify(userData));
+
+    AsyncStorage.setItem(
+      "userData",
+      JSON.stringify({ ...userData, events: updatedEvents })
+    );
 
     // Update user data in Firestore
     updateDoc(doc(usersRef, userToken), {
-      events: [...userData.events, event],
+      events: updatedEvents,
     }).catch((error) => {
       console.error("Error updating document: ", error);
     });
   };
 
   // Delete event function
-  const deleteEvent = (event) => {
-    const newEvents = userData.events.filter((e) => e !== event);
+  const deleteEvent = (eventId) => {
+    const newEvents = userData.events.filter((event) => event.id !== eventId);
 
     setUserData({
       ...userData,
       events: newEvents,
     });
-    AsyncStorage.setItem("userData", JSON.stringify(userData));
+
+    AsyncStorage.setItem(
+      "userData",
+      JSON.stringify({ ...userData, events: newEvents })
+    );
 
     // Update user data in Firestore
     updateDoc(doc(usersRef, userToken), {

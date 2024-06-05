@@ -1,21 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 
-export const Event = ({ event, height }) => {
-
-    function handlePress() {
-    }
+export const Event = ({ event, height, navigation }) => {
+  function handlePress() {
+    navigation.navigate("EventDetails", { event });
+  }
 
   return (
     <TouchableOpacity
-      className="flex flex-row justify-between align-center w-full p-2 mb-2 rounded-lg border-l-4 border-solid"
+      className="flex flex-row justify-between align-center w-full px-2 mb-2 rounded-lg border-l-4 border-solid flex-wrap overflow-hidden"
       style={{
         height: height || 60,
         backgroundColor: event.color,
       }}
       onPress={handlePress}
     >
-      <View className="flex flex-col justify-start align-center p-1 w-3/4">
+      <View className="flex justify-start align-center p-1 w-3/4">
         <Text
           className="text-xl font-thick"
           numberOfLines={1}
@@ -31,7 +31,7 @@ export const Event = ({ event, height }) => {
           {event.location}
         </Text>
       </View>
-      <View className="flex justify-start align-center">
+      <View className="flex justify-center align-center py-1">
         <Text className="text-sm ">
           {new Date(event.startDateTime).toLocaleTimeString([], {
             hour: "2-digit",
