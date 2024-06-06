@@ -24,8 +24,9 @@ import { Timetable } from "../components/Timetable";
 import { AddEventModal } from "../components/AddEventModal";
 import { colors } from "../utils/colors";
 
-export const Calendar = ({ navigation }) => {
+export const Calendar = () => {
   const { date, setDate } = useContext(DateContext);
+
   const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
   const [datePickerHeight, setDatePickerHeight] = useState(0);
@@ -34,7 +35,6 @@ export const Calendar = ({ navigation }) => {
   const scrollViewRef = useRef(null);
 
   const animatedHeight = useSharedValue(95);
-
   useEffect(() => {
     if (
       selectedOption === "day" &&
@@ -193,10 +193,9 @@ export const Calendar = ({ navigation }) => {
                 date={date}
                 blockHeight={blockHeight}
                 setBlockHeight={setBlockHeight}
-                navigation={navigation}
               />
             ) : (
-              <EventsList date={date} navigation={navigation} />
+              <EventsList date={date} />
             )}
             <View className="h-24" />
           </ScrollView>

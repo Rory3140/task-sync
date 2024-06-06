@@ -71,7 +71,7 @@ function checkOverlap(event1, event2) {
   return start1 < end2 && start2 < end1;
 }
 
-const EventWrapper = ({ event, blockHeight, width, left, navigation }) => {
+const EventWrapper = ({ event, blockHeight, width, left }) => {
   const { startDateTime, endDateTime } = event;
 
   const startHours = new Date(startDateTime).getHours();
@@ -94,12 +94,12 @@ const EventWrapper = ({ event, blockHeight, width, left, navigation }) => {
         left: `${left}%`,
       }}
     >
-      <Event event={event} height={eventHeight} navigation={navigation} />
+      <Event event={event} height={eventHeight} />
     </View>
   );
 };
 
-export const Timetable = ({ date, blockHeight, setBlockHeight, navigation }) => {
+export const Timetable = ({ date, blockHeight, setBlockHeight }) => {
   const [currentTimePosition, setCurrentTimePosition] = useState(null);
 
   const events = getEventsByDay(date);
@@ -163,7 +163,6 @@ export const Timetable = ({ date, blockHeight, setBlockHeight, navigation }) => 
             blockHeight={blockHeight}
             width={event.width}
             left={event.left}
-            navigation={navigation}
           />
         ))}
       </View>

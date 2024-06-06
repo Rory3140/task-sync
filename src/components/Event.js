@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 
-export const Event = ({ event, height, navigation }) => {
+import { RefContext } from "../context/RefContext";
+
+export const Event = ({ event, height }) => {
+  const { eventDetailsRef } = useContext(RefContext);
+
   function handlePress() {
-    navigation.navigate("EventDetails", { event });
+    eventDetailsRef.current?.expand(event);
   }
 
   return (
