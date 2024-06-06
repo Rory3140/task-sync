@@ -19,8 +19,9 @@ import {
 } from "react-native-gesture-handler";
 
 import { DateContext } from "../context/DateContext";
-import { EventsList } from "../components/EventsList";
+import { DateSelector } from "../components/DateSelector";
 import { Timetable } from "../components/Timetable";
+import { EventsList } from "../components/EventsList";
 import { AddEventModal } from "../components/AddEventModal";
 import { colors } from "../utils/colors";
 
@@ -29,12 +30,10 @@ export const Calendar = () => {
 
   const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
-  const [datePickerHeight, setDatePickerHeight] = useState(0);
 
   const addEventRef = useRef(null);
   const scrollViewRef = useRef(null);
 
-  const animatedHeight = useSharedValue(95);
   useEffect(() => {
     if (
       selectedOption === "day" &&
@@ -58,15 +57,6 @@ export const Calendar = () => {
   useEffect(() => {
     addEventRef.current?.close();
   }, [selectedOption]);
-
-  const handlePress = () => {
-    animatedHeight.value = withTiming(
-      animatedHeight.value === 95 ? 95 + datePickerHeight : 95,
-      {
-        duration: 300,
-      }
-    );
-  };
 
   function incrementDate() {
     if (selectedOption === "month") {
@@ -98,90 +88,12 @@ export const Calendar = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView className="flex-1 bg-offwhite">
-        <Animated.View
-          className="bg-white px-2 flex justify-start items-center"
-          style={{
-            borderBottomWidth: 0.5,
-            borderBottomColor: colors.lightGrey,
-            height: animatedHeight,
-          }}
-        >
-          <View className="p-2 flex items-center justify-centre w-full bg-white">
-            <SwitchSelector
-              options={[
-                { label: "Day", value: "day" },
-                { label: "Month", value: "month" },
-              ]}
-              initial={0}
-              onPress={(value) => {
-                setSelectedOption(value);
-              }}
-              buttonColor={colors.primary}
-              backgroundColor={colors.lightGrey}
-              borderColor={colors.lightGrey}
-              hasPadding
-            />
-          </View>
-
-          <View className="flex-row items-center justify-between w-full bg-white">
-            <TouchableOpacity onPress={decrementDate}>
-              <MaterialIcons
-                name="keyboard-arrow-left"
-                color={colors.primary}
-                size={30}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePress()}>
-              <Text className="text-xl font-thick color-black">
-                {(() => {
-                  switch (selectedOption) {
-                    case "day":
-                      return date.toDateString();
-                    case "month":
-                      return `${date.toLocaleString("default", {
-                        month: "long",
-                      })} ${date.getFullYear()}`;
-                    default:
-                      return "";
-                  }
-                })()}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={incrementDate}>
-              <MaterialIcons
-                name="keyboard-arrow-right"
-                color={colors.primary}
-                size={30}
-              />
-            </TouchableOpacity>
-          </View>
-          <View
-            className="flex items-center justify-between p-2 w-full absolute bottom-0 z-[-10] bg-white"
-            onLayout={(event) => {
-              const { height } = event.nativeEvent.layout;
-              setDatePickerHeight(height);
-            }}
-          >
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="spinner"
-              onChange={(event, selectedDate) => {
-                if (selectedDate) {
-                  if (Platform.OS === "android") {
-                    handlePress();
-                  }
-                  setDate(selectedDate);
-                }
-              }}
-            />
-            {Platform.OS === "ios" && (
-              <TouchableOpacity onPress={() => handlePress()}>
-                <Ionicons name="close" color={colors.primary} size={30} />
-              </TouchableOpacity>
-            )}
-          </View>
-        </Animated.View>
+        <DateSelector
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          incrementDate={incrementDate}
+          decrementDate={decrementDate}
+        />
 
         <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView

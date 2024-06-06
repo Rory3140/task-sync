@@ -91,7 +91,7 @@ export const AddEventModal = forwardRef((props, ref) => {
                   onChangeText={(text) => setTitle(text)}
                 />
               </View>
-              <View className="absolute w-5/6 bg-lightGrey h-0.5 rounded-full" />
+              <View className="absolute w-5/6 bg-lightGrey h-[1] rounded-full" />
               <View className="p-2 pl-4 m-2 w-full h-8 justify-center align-center">
                 <TextInput
                   className="w-full h-8"
@@ -146,7 +146,7 @@ export const AddEventModal = forwardRef((props, ref) => {
                   />
                 </View>
               </View>
-              <View className="absolute w-5/6 bg-lightGrey h-0.5 rounded-full" />
+              <View className="absolute w-5/6 bg-lightGrey h-[1] rounded-full" />
               <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
                 <Text className="text-l font-thick color-black">End Time</Text>
                 <View className="flex-row items-center justify-between">
