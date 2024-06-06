@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text } from "react-native";
 
 import { Event } from "./Event";
-
 import { getEventsByMonth } from "../utils/functions";
 
 export const EventsList = ({ date, navigation }) => {

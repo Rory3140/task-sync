@@ -6,17 +6,20 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { StatusBar } from "react-native";
 
 import { AuthProvider } from "./src/context/AuthContext";
+import { DateProvider } from "./src/context/DateContext";
 import { AppNav } from "./src/navigation/AppNav";
 
 export default function App() {
   return (
     <AuthProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
+      <DateProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>
             <StatusBar barStyle="dark-content" />
             <AppNav />
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </DateProvider>
     </AuthProvider>
   );
 }

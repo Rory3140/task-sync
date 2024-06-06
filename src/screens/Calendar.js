@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   SafeAreaView,
   Text,
@@ -18,14 +18,14 @@ import {
   State,
 } from "react-native-gesture-handler";
 
+import { DateContext } from "../context/DateContext";
 import { EventsList } from "../components/EventsList";
 import { Timetable } from "../components/Timetable";
 import { AddEventModal } from "../components/AddEventModal";
-
 import { colors } from "../utils/colors";
 
-export const Calendar = ({navigation}) => {
-  const [date, setDate] = useState(new Date());
+export const Calendar = ({ navigation }) => {
+  const { date, setDate } = useContext(DateContext);
   const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
   const [datePickerHeight, setDatePickerHeight] = useState(0);
@@ -183,9 +183,7 @@ export const Calendar = ({navigation}) => {
           </View>
         </Animated.View>
 
-        <PanGestureHandler
-          onHandlerStateChange={onHandlerStateChange}
-        >
+        <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
           <ScrollView
             className="bg-offWhite p-4 flex-1 w-full"
             ref={scrollViewRef}

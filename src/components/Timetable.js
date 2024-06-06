@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Text, View } from "react-native";
 
 import { Event } from "./Event";
-
 import { getEventsByDay } from "../utils/functions";
 import { colors } from "../utils/colors";
 

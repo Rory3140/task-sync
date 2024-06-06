@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Button } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { DateContext } from "../context/DateContext";
 import { Calendar } from "../screens/Calendar";
 import { EventDetails } from "../screens/EventDetails";
 import { Settings } from "../screens/Settings.js";
 import Example from "../screens/Example";
-
 import { colors } from "../utils/colors";
 
 const Drawer = createDrawerNavigator();
@@ -40,6 +41,12 @@ const CalendarStack = () => {
 };
 
 export const AppStack = () => {
+  const { setDate } = useContext(DateContext);
+
+  const goToToday = () => {
+    setDate(new Date());
+  };
+
   return (
     <Drawer.Navigator
       initialRouteName="CalendarStack"
@@ -57,7 +64,22 @@ export const AppStack = () => {
         drawerInactiveTintColor: colors.black,
       }}
     >
-      <Drawer.Screen name="CalendarStack" component={CalendarStack} options={{ title: "Calendar" }} />
+      <Drawer.Screen
+        name="CalendarStack"
+        component={CalendarStack}
+        options={() => ({
+          title: "Calendar",
+          headerRight: () => (
+            <Button
+              onPress={() => {
+                goToToday();
+              }}
+              title="Today"
+              color={colors.primary}
+            />
+          ),
+        })}
+      />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="Example" component={Example} />
     </Drawer.Navigator>
