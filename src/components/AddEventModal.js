@@ -5,24 +5,36 @@ import React, {
   forwardRef,
   useMemo,
 } from "react";
-import { Text, TouchableOpacity, View, TextInput } from "react-native";
+import { Text, TouchableOpacity, View, TextInput, Switch } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
+import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { AuthContext } from "../context/AuthContext";
+import { DateContext } from "../context/DateContext";
+import { RefContext } from "../context/RefContext";
 
 import { calendarColors, colors } from "../utils/colors";
 
 export const AddEventModal = forwardRef((props, ref) => {
-  const { date } = props;
-
   const { addEvent } = useContext(AuthContext);
+  const { date } = useContext(DateContext);
+  const { addEventRef } = useContext(RefContext);
+
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [eventColor, setEventColor] = useState(calendarColors.violet);
 
+  const [allDay, setAllDay] = useState(false);
   const [startDateTime, setStartDateTime] = useState(date);
   const [endDateTime, setEndDateTime] = useState(date);
+
+  const items = [
+    { label: "Event", value: "Event" },
+    { label: "To Do Item", value: "ToDoItem" },
+  ];
+  const [category, setCategory] = useState(items[0].value);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const currentDate = new Date();
@@ -53,13 +65,13 @@ export const AddEventModal = forwardRef((props, ref) => {
       endDateTime: newEndDateTime,
       color: eventColor,
     });
-    ref.current?.close();
+    addEventRef.current?.close();
   }
 
   const snapPoints = useMemo(() => ["50%", "75%"], []);
   return (
     <BottomSheet
-      ref={ref}
+      ref={addEventRef}
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
@@ -70,7 +82,7 @@ export const AddEventModal = forwardRef((props, ref) => {
           <View className="flex-row items-center justify-between w-full">
             <TouchableOpacity
               onPress={() => {
-                ref.current?.close();
+                addEventRef.current?.close();
               }}
             >
               <Text className="color-primary text-xl ">Cancel</Text>
@@ -91,7 +103,7 @@ export const AddEventModal = forwardRef((props, ref) => {
                   onChangeText={(text) => setTitle(text)}
                 />
               </View>
-              <View className="absolute w-5/6 bg-lightGrey h-[1] rounded-full" />
+              <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
               <View className="p-2 pl-4 m-2 w-full h-8 justify-center align-center">
                 <TextInput
                   className="w-full h-8"
@@ -103,8 +115,45 @@ export const AddEventModal = forwardRef((props, ref) => {
               </View>
             </View>
 
-            <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
+            <View className="flex items-center justify-start rounded-xl w-full m-4 bg-offWhite z-10">
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                <Text className="text-l font-thick color-black">Category</Text>
+                <View className="h-6 justify-center align-center">
+                  <DropDownPicker
+                    items={items}
+                    value={category}
+                    setValue={setCategory}
+                    open={dropdownOpen}
+                    setOpen={setDropdownOpen}
+                    style={{
+                      backgroundColor: colors.lightGrey,
+                      borderWidth: 0,
+                      minHeight: 0,
+                      height: 30,
+                      width: 175,
+                    }}
+                    dropDownContainerStyle={{
+                      backgroundColor: colors.white,
+                      borderWidth: 0,
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View className="flex items-center justify-start rounded-xl w-full m-4 bg-offWhite">
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                <Text className="text-l font-thick color-black">All Day</Text>
+                <Switch
+                  trackColor={{ false: colors.lightGrey, true: colors.primary }}
+                  thumbColor={colors.white}
+                  ios_backgroundColor={colors.lightGrey}
+                  onValueChange={() => setAllDay(!allDay)}
+                  value={allDay}
+                />
+              </View>
+              <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
                 <Text className="text-l font-thick color-black">
                   Start Time
                 </Text>
@@ -146,8 +195,8 @@ export const AddEventModal = forwardRef((props, ref) => {
                   />
                 </View>
               </View>
-              <View className="absolute w-5/6 bg-lightGrey h-[1] rounded-full" />
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
+              <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
                 <Text className="text-l font-thick color-black">End Time</Text>
                 <View className="flex-row items-center justify-between">
                   <DateTimePicker
@@ -186,7 +235,7 @@ export const AddEventModal = forwardRef((props, ref) => {
             </View>
 
             <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
                 <Text className="text-l font-thick color-black">
                   Event Color
                 </Text>

@@ -4,13 +4,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Platform,
   ScrollView,
 } from "react-native";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import SwitchSelector from "react-native-switch-selector";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {
   GestureHandlerRootView,
@@ -19,6 +14,7 @@ import {
 } from "react-native-gesture-handler";
 
 import { DateContext } from "../context/DateContext";
+import { RefContext } from "../context/RefContext";
 import { DateSelector } from "../components/DateSelector";
 import { Timetable } from "../components/Timetable";
 import { EventsList } from "../components/EventsList";
@@ -27,11 +23,11 @@ import { colors } from "../utils/colors";
 
 export const Calendar = () => {
   const { date, setDate } = useContext(DateContext);
+  const { addEventRef } = useContext(RefContext);
 
   const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
 
-  const addEventRef = useRef(null);
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
@@ -74,7 +70,7 @@ export const Calendar = () => {
     }
   }
 
-  const onHandlerStateChange = (event) => {
+  const onPanGestureHandlerStateChange = (event) => {
     if (event.nativeEvent.state === State.END) {
       const { translationX } = event.nativeEvent;
       if (translationX > 50) {
@@ -95,7 +91,9 @@ export const Calendar = () => {
           decrementDate={decrementDate}
         />
 
-        <PanGestureHandler onHandlerStateChange={onHandlerStateChange}>
+        <PanGestureHandler
+          onHandlerStateChange={onPanGestureHandlerStateChange}
+        >
           <ScrollView
             className="bg-offWhite p-4 flex-1 w-full"
             ref={scrollViewRef}
@@ -122,7 +120,7 @@ export const Calendar = () => {
             <Text className="text-xl font-thick color-primary">Add Event</Text>
           </TouchableOpacity>
         </View>
-        <AddEventModal ref={addEventRef} date={date} />
+        <AddEventModal />
       </SafeAreaView>
     </GestureHandlerRootView>
   );

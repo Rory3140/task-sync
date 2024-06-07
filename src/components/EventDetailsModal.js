@@ -6,21 +6,28 @@ import React, {
   useContext,
   useRef,
 } from "react";
-import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import BottomSheetModal from "@gorhom/bottom-sheet";
 
 import { AuthContext } from "../context/AuthContext";
 import { RefContext } from "../context/RefContext";
 
 export const EventDetailsModal = forwardRef((props, ref) => {
+  const { deleteEvent } = useContext(AuthContext);
   const { eventDetailsRef } = useContext(RefContext);
+  const { addEventRef } = useContext(RefContext);
+
   const [event, setEvent] = useState(null);
   const bottomSheetRef = useRef(null);
 
-  const { deleteEvent } = useContext(AuthContext);
 
   function resetStates() {
     setEvent(null);
+  }
+
+  function handleEdit() {
+    bottomSheetRef.current?.close();
+    addEventRef.current?.expand(event);
   }
 
   function handleDelete() {
@@ -55,11 +62,11 @@ export const EventDetailsModal = forwardRef((props, ref) => {
             <Text className="color-primary text-xl">Cancel</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleEdit()}>
             <Text className="color-primary text-xl">Edit</Text>
           </TouchableOpacity>
         </View>
-        <View className="flex justify-center align-center p-4 bg-white w-full">
+        <View className="flex justify-center align-center p-4 w-full">
           <Text className="text-xl font-bold">{event?.title}</Text>
           {event?.location && (
             <Text className="text-lg">Location: {event?.location}</Text>
@@ -82,8 +89,11 @@ export const EventDetailsModal = forwardRef((props, ref) => {
             {new Date(event?.endDateTime).toDateString()}
           </Text>
           <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
+          <View
+            className="w-full h-6 rounded-full my-2"
+            style={{ backgroundColor: event?.color }}
+          />
         </View>
-        <View className="flex-row justify-center w-full mt-4"></View>
       </View>
       <View className="flex-row items-center justify-center w-full py-6">
         <TouchableOpacity
