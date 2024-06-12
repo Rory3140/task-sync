@@ -15,6 +15,9 @@ export function getEventsByDay(date) {
 
   return userData.events
     .map((event) => {
+      if (event.category != "event") {
+        return null;
+      }
       const eventStart = new Date(event.startDateTime);
       const eventEnd = new Date(event.endDateTime);
 
@@ -75,3 +78,12 @@ export function getEventsByMonth(date) {
   return eventsByDay;
 }
 
+export function getCategory(event) {
+  if (event.category === "event") {
+    return "Event";
+  } else if (event.category === "allDayEvent") {
+    return "All Day";
+  } else if (event.category === "toDoItem") {
+    return "To Do Item";
+  }
+}

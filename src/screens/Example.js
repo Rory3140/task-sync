@@ -3,13 +3,11 @@ import { StyleSheet, View, Button } from "react-native";
 import { AddEventModal } from "../components/AddEventModal";
 
 export default function TabOneScreen() {
-  const bottomSheetRef = useRef(null);
-  const handlePresentModalPress = () => bottomSheetRef.current?.present();
+
 
   return (
     <View style={styles.container}>
-      <AddEventModal ref={bottomSheetRef} date={new Date()} />
-      <Button title="Present Modal" onPress={handlePresentModalPress} />
+
     </View>
   );
 }

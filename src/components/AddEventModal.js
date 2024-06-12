@@ -5,7 +5,14 @@ import React, {
   forwardRef,
   useMemo,
 } from "react";
-import { Text, TouchableOpacity, View, TextInput, Switch } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  TextInput,
+  Switch,
+  Keyboard,
+} from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -30,8 +37,8 @@ export const AddEventModal = forwardRef((props, ref) => {
   const [endDateTime, setEndDateTime] = useState(date);
 
   const items = [
-    { label: "Event", value: "Event" },
-    { label: "To Do Item", value: "ToDoItem" },
+    { label: "Event", value: "event" },
+    { label: "To Do Item", value: "toDoItem" },
   ];
   const [category, setCategory] = useState(items[0].value);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -51,20 +58,51 @@ export const AddEventModal = forwardRef((props, ref) => {
   function resetStates() {
     setTitle("");
     setLocation("");
+    setAllDay(false);
+    setCategory(items[0].value);
+    setDropdownOpen(false);
     setEventColor(calendarColors.violet);
   }
 
   function createEvent() {
-    const newStartDateTime = startDateTime.toISOString();
-    const newEndDateTime = endDateTime.toISOString();
+    if (allDay && category === "event") {
+      const newCategory = "allDayEvent";
+      const newStartDateTime = new Date(
+        startDateTime.setHours(0, 0, 0, 0)
+      ).toISOString();
 
-    addEvent({
-      title,
-      location,
-      startDateTime: newStartDateTime,
-      endDateTime: newEndDateTime,
-      color: eventColor,
-    });
+      addEvent({
+        title,
+        location,
+        category: newCategory,
+        startDateTime: newStartDateTime,
+        color: eventColor,
+      });
+    } else if (category === "toDoItem") {
+      const newStartDateTime = new Date(
+        startDateTime.setHours(0, 0, 0, 0)
+      ).toISOString();
+
+      addEvent({
+        title,
+        location,
+        category,
+        startDateTime: newStartDateTime,
+        color: eventColor,
+      });
+    } else {
+      const newStartDateTime = startDateTime.toISOString();
+      const newEndDateTime = endDateTime.toISOString();
+
+      addEvent({
+        title,
+        location,
+        category,
+        startDateTime: newStartDateTime,
+        endDateTime: newEndDateTime,
+        color: eventColor,
+      });
+    }
     addEventRef.current?.close();
   }
 
@@ -75,7 +113,10 @@ export const AddEventModal = forwardRef((props, ref) => {
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
-      onClose={() => resetStates()}
+      onClose={() => {
+        Keyboard.dismiss();
+        resetStates();
+      }}
     >
       <View className="bg-white rounded-t-xl w-full flex items-center justify-start h-full">
         <View className="flex items-center justify-center w-full px-4">
@@ -142,96 +183,137 @@ export const AddEventModal = forwardRef((props, ref) => {
             </View>
 
             <View className="flex items-center justify-start rounded-xl w-full m-4 bg-offWhite">
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
-                <Text className="text-l font-thick color-black">All Day</Text>
-                <Switch
-                  trackColor={{ false: colors.lightGrey, true: colors.primary }}
-                  thumbColor={colors.white}
-                  ios_backgroundColor={colors.lightGrey}
-                  onValueChange={() => setAllDay(!allDay)}
-                  value={allDay}
-                />
-              </View>
-              <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
-                <Text className="text-l font-thick color-black">
-                  Start Time
-                </Text>
-                <View className="flex-row items-center justify-between">
-                  <DateTimePicker
-                    value={startDateTime}
-                    mode="date"
-                    display="calendar"
-                    accentColor={colors.primary}
-                    themeVariant="light"
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        setStartDateTime(selectedDate);
-                        if (selectedDate > endDateTime) {
-                          setEndDateTime(
-                            new Date(selectedDate.getTime() + 60 * 60 * 1000)
-                          );
-                        }
-                      }
-                    }}
-                  />
-                  <DateTimePicker
-                    value={startDateTime}
-                    mode="time"
-                    display="default"
-                    accentColor={colors.primary}
-                    themeVariant="light"
-                    minuteInterval={5}
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        setStartDateTime(selectedDate);
-                        if (selectedDate > endDateTime) {
-                          setEndDateTime(
-                            new Date(selectedDate.getTime() + 60 * 60 * 1000)
-                          );
-                        }
-                      }
-                    }}
-                  />
-                </View>
-              </View>
-              <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
-                <Text className="text-l font-thick color-black">End Time</Text>
-                <View className="flex-row items-center justify-between">
-                  <DateTimePicker
-                    value={endDateTime}
-                    mode="date"
-                    display="calendar"
-                    accentColor={colors.primary}
-                    themeVariant="light"
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        if (selectedDate < startDateTime) {
+              {category === "toDoItem" ? null : (
+                <>
+                  <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                    <Text className="text-l font-thick color-black">
+                      All Day
+                    </Text>
+                    <Switch
+                      trackColor={{
+                        false: colors.lightGrey,
+                        true: colors.primary,
+                      }}
+                      thumbColor={colors.white}
+                      onValueChange={() => setAllDay(!allDay)}
+                      value={allDay}
+                    />
+                  </View>
+                  <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
+                </>
+              )}
+              {allDay || category === "toDoItem" ? (
+                <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                  <Text className="text-l font-thick color-black">Date</Text>
+                  <View className="flex-row items-center justify-between">
+                    <DateTimePicker
+                      value={startDateTime}
+                      mode="date"
+                      display="calendar"
+                      accentColor={colors.primary}
+                      themeVariant="light"
+                      onChange={(event, selectedDate) => {
+                        if (selectedDate) {
                           setStartDateTime(selectedDate);
+                          if (selectedDate > endDateTime) {
+                            setEndDateTime(
+                              new Date(selectedDate.getTime() + 60 * 60 * 1000)
+                            );
+                          }
                         }
-                        setEndDateTime(selectedDate);
-                      }
-                    }}
-                  />
-                  <DateTimePicker
-                    value={endDateTime}
-                    mode="time"
-                    display="default"
-                    accentColor={colors.primary}
-                    themeVariant="light"
-                    minuteInterval={5}
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        if (selectedDate < startDateTime) {
-                          setStartDateTime(selectedDate);
-                        }
-                        setEndDateTime(selectedDate);
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                  </View>
                 </View>
-              </View>
+              ) : (
+                <>
+                  <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                    <Text className="text-l font-thick color-black">
+                      Start Time
+                    </Text>
+                    <View className="flex-row items-center justify-between">
+                      <DateTimePicker
+                        value={startDateTime}
+                        mode="date"
+                        display="calendar"
+                        accentColor={colors.primary}
+                        themeVariant="light"
+                        onChange={(event, selectedDate) => {
+                          if (selectedDate) {
+                            setStartDateTime(selectedDate);
+                            if (selectedDate > endDateTime) {
+                              setEndDateTime(
+                                new Date(
+                                  selectedDate.getTime() + 60 * 60 * 1000
+                                )
+                              );
+                            }
+                          }
+                        }}
+                      />
+                      <DateTimePicker
+                        value={startDateTime}
+                        mode="time"
+                        display="default"
+                        accentColor={colors.primary}
+                        themeVariant="light"
+                        minuteInterval={5}
+                        onChange={(event, selectedDate) => {
+                          if (selectedDate) {
+                            setStartDateTime(selectedDate);
+                            if (selectedDate > endDateTime) {
+                              setEndDateTime(
+                                new Date(
+                                  selectedDate.getTime() + 60 * 60 * 1000
+                                )
+                              );
+                            }
+                          }
+                        }}
+                      />
+                    </View>
+                  </View>
+                  <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
+                  <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
+                    <Text className="text-l font-thick color-black">
+                      End Time
+                    </Text>
+                    <View className="flex-row items-center justify-between">
+                      <DateTimePicker
+                        value={endDateTime}
+                        mode="date"
+                        display="calendar"
+                        accentColor={colors.primary}
+                        themeVariant="light"
+                        onChange={(event, selectedDate) => {
+                          if (selectedDate) {
+                            if (selectedDate < startDateTime) {
+                              setStartDateTime(selectedDate);
+                            }
+                            setEndDateTime(selectedDate);
+                          }
+                        }}
+                      />
+                      <DateTimePicker
+                        value={endDateTime}
+                        mode="time"
+                        display="default"
+                        accentColor={colors.primary}
+                        themeVariant="light"
+                        minuteInterval={5}
+                        onChange={(event, selectedDate) => {
+                          if (selectedDate) {
+                            if (selectedDate < startDateTime) {
+                              setStartDateTime(selectedDate);
+                            }
+                            setEndDateTime(selectedDate);
+                          }
+                        }}
+                      />
+                    </View>
+                  </View>
+                </>
+              )}
             </View>
 
             <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">

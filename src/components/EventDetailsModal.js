@@ -1,5 +1,6 @@
 import React, {
   useState,
+  useEffect,
   useMemo,
   forwardRef,
   useImperativeHandle,
@@ -12,18 +13,16 @@ import BottomSheetModal from "@gorhom/bottom-sheet";
 import { AuthContext } from "../context/AuthContext";
 import { RefContext } from "../context/RefContext";
 
+import { getCategory } from "../utils/functions";
+
 export const EventDetailsModal = forwardRef((props, ref) => {
   const { deleteEvent } = useContext(AuthContext);
   const { eventDetailsRef } = useContext(RefContext);
   const { addEventRef } = useContext(RefContext);
 
   const [event, setEvent] = useState(null);
+  const [adjustedCategory, setAdjustedCategory] = useState(null);
   const bottomSheetRef = useRef(null);
-
-
-  function resetStates() {
-    setEvent(null);
-  }
 
   function handleEdit() {
     bottomSheetRef.current?.close();
@@ -38,6 +37,7 @@ export const EventDetailsModal = forwardRef((props, ref) => {
   useImperativeHandle(eventDetailsRef, () => ({
     expand(data) {
       setEvent(data);
+      setAdjustedCategory(getCategory(data));
       bottomSheetRef.current?.expand();
     },
   }));
@@ -49,7 +49,6 @@ export const EventDetailsModal = forwardRef((props, ref) => {
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
-      onClose={resetStates}
       containerStyle={{ marginTop: 50 }}
     >
       <View className="flex-1 justify-start align-center px-4 w-full">
@@ -67,27 +66,38 @@ export const EventDetailsModal = forwardRef((props, ref) => {
           </TouchableOpacity>
         </View>
         <View className="flex justify-center align-center p-4 w-full">
-          <Text className="text-xl font-bold">{event?.title}</Text>
+          <View className="flex-row items-center justify-between w-full">
+            <Text className="text-xl font-bold">{event?.title}</Text>
+            <Text className="text-lg">{adjustedCategory}</Text>
+          </View>
           {event?.location && (
             <Text className="text-lg">Location: {event?.location}</Text>
           )}
           <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
-          <Text className="text-sm color-darkGrey">
-            from{" "}
-            {new Date(event?.startDateTime).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            {new Date(event?.startDateTime).toDateString()}
-          </Text>
-          <Text className="text-sm color-darkGrey">
-            to{" "}
-            {new Date(event?.endDateTime).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            {new Date(event?.endDateTime).toDateString()}
-          </Text>
+          {event?.category === "event" ? (
+            <>
+              <Text className="text-sm color-darkGrey">
+                from{" "}
+                {new Date(event?.startDateTime).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                {new Date(event?.startDateTime).toDateString()}
+              </Text>
+              <Text className="text-sm color-darkGrey">
+                to{" "}
+                {new Date(event?.endDateTime).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                {new Date(event?.endDateTime).toDateString()}
+              </Text>
+            </>
+          ) : (
+            <Text className="text-sm color-darkGrey">
+              {new Date(event?.startDateTime).toDateString()}
+            </Text>
+          )}
           <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
           <View
             className="w-full h-6 rounded-full my-2"
