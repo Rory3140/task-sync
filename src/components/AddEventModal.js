@@ -4,6 +4,7 @@ import React, {
   useEffect,
   forwardRef,
   useMemo,
+  useImperativeHandle,
 } from "react";
 import {
   Text,
@@ -83,9 +84,13 @@ export const AddEventModal = forwardRef((props, ref) => {
         startDateTime.setHours(0, 0, 0, 0)
       ).toISOString();
 
+      const isCompleted = false;
+
+
       addEvent({
         title,
         location,
+        isCompleted,
         category,
         startDateTime: newStartDateTime,
         color: eventColor,
@@ -174,7 +179,7 @@ export const AddEventModal = forwardRef((props, ref) => {
                       width: 175,
                     }}
                     dropDownContainerStyle={{
-                      backgroundColor: colors.white,
+                      backgroundColor: colors.lightGrey,
                       borderWidth: 0,
                     }}
                   />

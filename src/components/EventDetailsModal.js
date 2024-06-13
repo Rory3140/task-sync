@@ -16,17 +16,23 @@ import { RefContext } from "../context/RefContext";
 import { getCategory } from "../utils/functions";
 
 export const EventDetailsModal = forwardRef((props, ref) => {
-  const { deleteEvent } = useContext(AuthContext);
+  const { deleteEvent, updateCompleted } = useContext(AuthContext);
   const { eventDetailsRef } = useContext(RefContext);
   const { addEventRef } = useContext(RefContext);
 
   const [event, setEvent] = useState(null);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [adjustedCategory, setAdjustedCategory] = useState(null);
   const bottomSheetRef = useRef(null);
 
   function handleEdit() {
     bottomSheetRef.current?.close();
     addEventRef.current?.expand(event);
+  }
+
+  function handleUpdateCompleted() {
+    setIsCompleted(!isCompleted);
+    updateCompleted(event, !isCompleted);
   }
 
   function handleDelete() {
@@ -38,6 +44,9 @@ export const EventDetailsModal = forwardRef((props, ref) => {
     expand(data) {
       setEvent(data);
       setAdjustedCategory(getCategory(data));
+      if (data.category === "toDoItem") {
+        setIsCompleted(data.isCompleted);
+      }
       bottomSheetRef.current?.expand();
     },
   }));
@@ -99,6 +108,26 @@ export const EventDetailsModal = forwardRef((props, ref) => {
             </Text>
           )}
           <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
+          {event?.category === "toDoItem" && (
+            <>
+              <View className="flex-row items-center justify-between w-full">
+                <Text className="text-md">
+                  Status: {isCompleted ? "Completed" : "Incomplete"}
+                </Text>
+                <View>
+                  <TouchableOpacity
+                    onPress={handleUpdateCompleted}
+                    className="flex-row items-center justify-center w-full"
+                  >
+                    <Text className="text-md color-primary">
+                      {isCompleted ? "Mark as Incomplete" : "Mark as Completed"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
+            </>
+          )}
           <View
             className="w-full h-6 rounded-full my-2"
             style={{ backgroundColor: event?.color }}

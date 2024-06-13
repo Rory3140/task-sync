@@ -42,6 +42,52 @@ export function getEventsByDay(date) {
     });
 }
 
+export function getAllDayEventsByDay(date) {
+  const { userData } = useContext(AuthContext);
+  if (!userData.events) {
+    return [];
+  }
+
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  return userData.events
+    .map((event) => {
+      if (event.category === "event") {
+        return null;
+      }
+      const eventStart = new Date(event.startDateTime);
+
+      if (eventStart <= endOfDay && eventStart >= startOfDay) {
+        const adjustedEvent = { ...event };
+
+        if (eventStart < startOfDay) {
+          adjustedEvent.startDateTime = startOfDay.toISOString();
+        }
+
+        return adjustedEvent;
+      }
+      return null;
+    })
+    .filter((event) => event !== null)
+    .sort((a, b) => {
+      if (a.category === "toDoItem" && b.category !== "toDoItem") {
+        return -1;
+      } else if (a.category !== "toDoItem" && b.category === "toDoItem") {
+        return 1;
+      } else if (a.category === "allDayEvent" && b.category !== "allDayEvent") {
+        return -1;
+      } else if (a.category !== "allDayEvent" && b.category === "allDayEvent") {
+        return 1;
+      } else {
+        return new Date(a.startDateTime) - new Date(b.startDateTime);
+      }
+    });
+}
+
 export function getEventsByMonth(date) {
   const { userData } = useContext(AuthContext);
   if (!userData || !userData.events) {
@@ -56,7 +102,19 @@ export function getEventsByMonth(date) {
         eventDate.getFullYear() === date.getFullYear()
       );
     })
-    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
+    .sort((a, b) => {
+      if (a.category === "toDoItem" && b.category !== "toDoItem") {
+        return -1;
+      } else if (a.category !== "toDoItem" && b.category === "toDoItem") {
+        return 1;
+      } else if (a.category === "allDayEvent" && b.category !== "allDayEvent") {
+        return -1;
+      } else if (a.category !== "allDayEvent" && b.category === "allDayEvent") {
+        return 1;
+      } else {
+        return new Date(a.startDateTime) - new Date(b.startDateTime);
+      }
+    });
 
   const eventsByDay = [];
 

@@ -16,6 +16,7 @@ import {
 import { DateContext } from "../context/DateContext";
 import { RefContext } from "../context/RefContext";
 import { DateSelector } from "../components/DateSelector";
+import { AllDayEvents } from "../components/AllDayEvents";
 import { Timetable } from "../components/Timetable";
 import { EventsList } from "../components/EventsList";
 import { AddEventModal } from "../components/AddEventModal";
@@ -90,6 +91,7 @@ export const Calendar = () => {
           incrementDate={incrementDate}
           decrementDate={decrementDate}
         />
+        {selectedOption === "day" && <AllDayEvents />}
 
         <PanGestureHandler
           onHandlerStateChange={onPanGestureHandlerStateChange}
@@ -111,7 +113,7 @@ export const Calendar = () => {
           </ScrollView>
         </PanGestureHandler>
 
-        <View className="bg-white p-4 pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
+        <View className="bg-white pb-6 rounded-t-xl flex items-center justify-between w-full absolute bottom-0 shadow-xl">
           <TouchableOpacity
             className="bg-secondary py-2 px-10 rounded-full m-2 flex-row items-center justify-around"
             onPress={() => addEventRef.current?.expand()}

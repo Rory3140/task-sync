@@ -224,6 +224,33 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // Update completed status of the event
+  function updateCompleted(event, isChecked) {
+    const updatedEvents = userData.events.map((e) => {
+      if (e.id === event.id) {
+        return { ...e, isCompleted: isChecked };
+      }
+      return e;
+    });
+
+    setUserData({
+      ...userData,
+      events: updatedEvents,
+    });
+
+    AsyncStorage.setItem(
+      "userData",
+      JSON.stringify({ ...userData, events: updatedEvents })
+    );
+
+    // Update user data in Firestore
+    updateDoc(doc(usersRef, userToken), {
+      events: updatedEvents,
+    }).catch((error) => {
+      console.error("Error updating document: ", error);
+    });
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -236,6 +263,7 @@ export const AuthProvider = ({ children }) => {
         signup,
         addEvent,
         deleteEvent,
+        updateCompleted,
       }}
     >
       {children}

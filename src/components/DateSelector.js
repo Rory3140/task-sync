@@ -30,10 +30,8 @@ export const DateSelector = ({
 
   return (
     <Animated.View
-      className="bg-white px-2 flex justify-start items-center"
+      className="bg-white px-2 flex justify-start items-center border-b-0.5 border-lightGrey"
       style={{
-        borderBottomWidth: 0.5,
-        borderBottomColor: colors.lightGrey,
         height: animatedHeight,
       }}
     >
