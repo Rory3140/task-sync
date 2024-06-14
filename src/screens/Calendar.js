@@ -52,7 +52,7 @@ export const Calendar = () => {
   }, [date, blockHeight, selectedOption]);
 
   useEffect(() => {
-    addEventRef.current?.close();
+    // addEventRef.current?.close();
   }, [selectedOption]);
 
   function incrementDate() {

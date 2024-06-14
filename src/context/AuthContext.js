@@ -224,6 +224,33 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // Update and event
+  function updateEvent(event) {
+    const updatedEvents = userData.events.map((e) => {
+      if (e.id === event.id) {
+        return event;
+      }
+      return e;
+    });
+
+    setUserData({
+      ...userData,
+      events: updatedEvents,
+    });
+
+    AsyncStorage.setItem(
+      "userData",
+      JSON.stringify({ ...userData, events: updatedEvents })
+    );
+
+    // Update user data in Firestore
+    updateDoc(doc(usersRef, userToken), {
+      events: updatedEvents,
+    }).catch((error) => {
+      console.error("Error updating document: ", error);
+    });
+  }
+
   // Update completed status of the event
   function updateCompleted(event, isChecked) {
     const updatedEvents = userData.events.map((e) => {
@@ -262,6 +289,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         signup,
         addEvent,
+        updateEvent,
         deleteEvent,
         updateCompleted,
       }}

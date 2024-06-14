@@ -2,9 +2,9 @@ import React, {
   useState,
   useContext,
   useEffect,
-  forwardRef,
   useMemo,
   useImperativeHandle,
+  useRef,
 } from "react";
 import {
   Text,
@@ -24,11 +24,13 @@ import { RefContext } from "../context/RefContext";
 
 import { calendarColors, colors } from "../utils/colors";
 
-export const AddEventModal = forwardRef((props, ref) => {
-  const { addEvent } = useContext(AuthContext);
+export const AddEventModal = () => {
+  const { addEvent, updateEvent } = useContext(AuthContext);
   const { date } = useContext(DateContext);
   const { addEventRef } = useContext(RefContext);
+  const bottomSheetRef = useRef(null);
 
+  const [eventId, setEventId] = useState(null);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [eventColor, setEventColor] = useState(calendarColors.violet);
@@ -57,6 +59,7 @@ export const AddEventModal = forwardRef((props, ref) => {
   }, [date]);
 
   function resetStates() {
+    setEventId(null);
     setTitle("");
     setLocation("");
     setAllDay(false);
@@ -65,56 +68,60 @@ export const AddEventModal = forwardRef((props, ref) => {
     setEventColor(calendarColors.violet);
   }
 
-  function createEvent() {
-    if (allDay && category === "event") {
-      const newCategory = "allDayEvent";
-      const newStartDateTime = new Date(
-        startDateTime.setHours(0, 0, 0, 0)
-      ).toISOString();
+  function saveEvent() {
+    const eventDetails = {
+      title,
+      location,
+      category: (category === "event" && allDay) ? "allDayEvent" : category,
+      startDateTime: allDay
+        ? new Date(startDateTime.setHours(0, 0, 0, 0)).toISOString()
+        : startDateTime.toISOString(),
+      endDateTime:
+        !allDay && category !== "toDoItem"
+          ? endDateTime.toISOString()
+          : "",
+      color: eventColor,
+      isCompleted: category === "toDoItem" ? false : "",
+    };
 
-      addEvent({
-        title,
-        location,
-        category: newCategory,
-        startDateTime: newStartDateTime,
-        color: eventColor,
-      });
-    } else if (category === "toDoItem") {
-      const newStartDateTime = new Date(
-        startDateTime.setHours(0, 0, 0, 0)
-      ).toISOString();
-
-      const isCompleted = false;
-
-
-      addEvent({
-        title,
-        location,
-        isCompleted,
-        category,
-        startDateTime: newStartDateTime,
-        color: eventColor,
-      });
+    if (eventId) {
+      updateEvent({ id: eventId, ...eventDetails });
     } else {
-      const newStartDateTime = startDateTime.toISOString();
-      const newEndDateTime = endDateTime.toISOString();
-
-      addEvent({
-        title,
-        location,
-        category,
-        startDateTime: newStartDateTime,
-        endDateTime: newEndDateTime,
-        color: eventColor,
-      });
+      addEvent(eventDetails);
     }
-    addEventRef.current?.close();
+    bottomSheetRef.current?.close();
   }
+
+  useImperativeHandle(addEventRef, () => ({
+    expand(event) {
+      if (event) {
+        setEventId(event.id);
+        setTitle(event.title);
+        setLocation(event.location);
+        setEventColor(event.color);
+        setCategory(event.category);
+        setStartDateTime(new Date(event.startDateTime));
+        if (event.endDateTime) {
+          setEndDateTime(new Date(event.endDateTime));
+        }
+        setAllDay(event.category === "allDayEvent");
+        if (event.category === "toDoItem") {
+          setAllDay(true);
+        }
+        if (event.category === "allDayEvent") {
+          setCategory("event");
+        }
+      } else {
+        resetStates();
+      }
+      bottomSheetRef.current?.expand();
+    },
+  }));
 
   const snapPoints = useMemo(() => ["50%", "75%"], []);
   return (
     <BottomSheet
-      ref={addEventRef}
+      ref={bottomSheetRef}
       index={-1}
       snapPoints={snapPoints}
       enablePanDownToClose
@@ -128,14 +135,16 @@ export const AddEventModal = forwardRef((props, ref) => {
           <View className="flex-row items-center justify-between w-full">
             <TouchableOpacity
               onPress={() => {
-                addEventRef.current?.close();
+                bottomSheetRef.current?.close();
               }}
             >
-              <Text className="color-primary text-xl ">Cancel</Text>
+              <Text className="color-primary text-xl">Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => createEvent()}>
-              <Text className="color-primary text-xl ">Add</Text>
+            <TouchableOpacity onPress={() => saveEvent()}>
+              <Text className="color-primary text-xl">
+                {eventId ? "Update" : "Add"}
+              </Text>
             </TouchableOpacity>
           </View>
           <View className="flex items-center justify-center w-full">
@@ -214,9 +223,7 @@ export const AddEventModal = forwardRef((props, ref) => {
                     <DateTimePicker
                       value={startDateTime}
                       mode="date"
-                      display="calendar"
-                      accentColor={colors.primary}
-                      themeVariant="light"
+                      display="default"
                       onChange={(event, selectedDate) => {
                         if (selectedDate) {
                           setStartDateTime(selectedDate);
@@ -234,35 +241,13 @@ export const AddEventModal = forwardRef((props, ref) => {
                 <>
                   <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
                     <Text className="text-l font-thick color-black">
-                      Start Time
+                      Start Date
                     </Text>
                     <View className="flex-row items-center justify-between">
                       <DateTimePicker
                         value={startDateTime}
-                        mode="date"
-                        display="calendar"
-                        accentColor={colors.primary}
-                        themeVariant="light"
-                        onChange={(event, selectedDate) => {
-                          if (selectedDate) {
-                            setStartDateTime(selectedDate);
-                            if (selectedDate > endDateTime) {
-                              setEndDateTime(
-                                new Date(
-                                  selectedDate.getTime() + 60 * 60 * 1000
-                                )
-                              );
-                            }
-                          }
-                        }}
-                      />
-                      <DateTimePicker
-                        value={startDateTime}
-                        mode="time"
+                        mode="datetime"
                         display="default"
-                        accentColor={colors.primary}
-                        themeVariant="light"
-                        minuteInterval={5}
                         onChange={(event, selectedDate) => {
                           if (selectedDate) {
                             setStartDateTime(selectedDate);
@@ -281,73 +266,25 @@ export const AddEventModal = forwardRef((props, ref) => {
                   <View className="w-5/6 bg-lightGrey h-[1] rounded-full" />
                   <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
                     <Text className="text-l font-thick color-black">
-                      End Time
+                      End Date
                     </Text>
                     <View className="flex-row items-center justify-between">
                       <DateTimePicker
                         value={endDateTime}
-                        mode="date"
-                        display="calendar"
-                        accentColor={colors.primary}
-                        themeVariant="light"
-                        onChange={(event, selectedDate) => {
-                          if (selectedDate) {
-                            if (selectedDate < startDateTime) {
-                              setStartDateTime(selectedDate);
-                            }
-                            setEndDateTime(selectedDate);
-                          }
-                        }}
-                      />
-                      <DateTimePicker
-                        value={endDateTime}
-                        mode="time"
+                        mode="datetime"
                         display="default"
-                        accentColor={colors.primary}
-                        themeVariant="light"
-                        minuteInterval={5}
-                        onChange={(event, selectedDate) => {
-                          if (selectedDate) {
-                            if (selectedDate < startDateTime) {
-                              setStartDateTime(selectedDate);
-                            }
-                            setEndDateTime(selectedDate);
-                          }
-                        }}
+                        onChange={(event, selectedDate) =>
+                          setEndDateTime(selectedDate)
+                        }
                       />
                     </View>
                   </View>
                 </>
               )}
             </View>
-
-            <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
-              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between items-center">
-                <Text className="text-l font-thick color-black">
-                  Event Color
-                </Text>
-                <View className="flex-row items-center justify-between">
-                  {Object.values(calendarColors).map((color) => (
-                    <TouchableOpacity
-                      key={color}
-                      onPress={() => setEventColor(color)}
-                    >
-                      <View
-                        className={`w-6 h-6 rounded-full m-1 ${
-                          color === eventColor
-                            ? "border-2 border-black"
-                            : "border-2 border-lightGrey"
-                        }`}
-                        style={{ backgroundColor: color }}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            </View>
           </View>
         </View>
       </View>
     </BottomSheet>
   );
-});
+};

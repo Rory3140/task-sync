@@ -2,7 +2,6 @@ import React, {
   useState,
   useEffect,
   useMemo,
-  forwardRef,
   useImperativeHandle,
   useContext,
   useRef,
@@ -15,7 +14,7 @@ import { RefContext } from "../context/RefContext";
 
 import { getCategory } from "../utils/functions";
 
-export const EventDetailsModal = forwardRef((props, ref) => {
+export const EventDetailsModal = () => {
   const { deleteEvent, updateCompleted } = useContext(AuthContext);
   const { eventDetailsRef } = useContext(RefContext);
   const { addEventRef } = useContext(RefContext);
@@ -144,4 +143,4 @@ export const EventDetailsModal = forwardRef((props, ref) => {
       </View>
     </BottomSheetModal>
   );
-});
+};
