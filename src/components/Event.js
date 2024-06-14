@@ -8,7 +8,7 @@ import { colors } from "../utils/colors";
 import { getCategory } from "../utils/functions";
 
 export const Event = ({ event, height }) => {
-  const { eventDetailsRef } = useContext(RefContext);
+  const { eventDetailsRef, addEventRef } = useContext(RefContext);
   const { updateCompleted } = useContext(AuthContext);
   const [isChecked, setIsChecked] = useState(false);
 
@@ -29,6 +29,7 @@ export const Event = ({ event, height }) => {
   const adjustedCategory = getCategory(event);
 
   function handlePress() {
+    addEventRef.current?.close();
     eventDetailsRef.current?.expand(event);
   }
 

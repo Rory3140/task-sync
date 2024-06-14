@@ -9,7 +9,6 @@ export const Settings = () => {
 
   return (
     <View className="bg-offwhite p-4 h-full flex justify-center items-center">
-      <Text className="text-center">User Data: {JSON.stringify(userData)}</Text>
       <SubmitButton label={"Logout"} onPress={logout} />
     </View>
   );

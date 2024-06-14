@@ -32,6 +32,10 @@ export const Calendar = () => {
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
+    addEventRef.current?.close();
+  }, [date, selectedOption]);
+
+  useEffect(() => {
     if (
       selectedOption === "day" &&
       date.toDateString() === new Date().toDateString()
@@ -50,10 +54,6 @@ export const Calendar = () => {
       }
     }
   }, [date, blockHeight, selectedOption]);
-
-  useEffect(() => {
-    // addEventRef.current?.close();
-  }, [selectedOption]);
 
   function incrementDate() {
     if (selectedOption === "month") {

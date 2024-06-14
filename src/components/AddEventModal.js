@@ -72,14 +72,12 @@ export const AddEventModal = () => {
     const eventDetails = {
       title,
       location,
-      category: (category === "event" && allDay) ? "allDayEvent" : category,
+      category: category === "event" && allDay ? "allDayEvent" : category,
       startDateTime: allDay
         ? new Date(startDateTime.setHours(0, 0, 0, 0)).toISOString()
         : startDateTime.toISOString(),
       endDateTime:
-        !allDay && category !== "toDoItem"
-          ? endDateTime.toISOString()
-          : "",
+        !allDay && category !== "toDoItem" ? endDateTime.toISOString() : "",
       color: eventColor,
       isCompleted: category === "toDoItem" ? false : "",
     };
@@ -115,6 +113,9 @@ export const AddEventModal = () => {
         resetStates();
       }
       bottomSheetRef.current?.expand();
+    },
+    close() {
+      bottomSheetRef.current?.close();
     },
   }));
 
