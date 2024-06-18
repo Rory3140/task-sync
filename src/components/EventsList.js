@@ -1,11 +1,18 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useContext } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 
+import { DateContext } from "../context/DateContext";
 import { Event } from "./Event";
 import { getEventsByMonth } from "../utils/functions";
 
-export const EventsList = ({ date, navigation }) => {
+export const EventsList = ({ navigation, setSelectedOption }) => {
+  const { date, setDate } = useContext(DateContext);
   const eventsByDay = getEventsByMonth(date);
+
+  function handlePress(date) {
+    setDate(date);
+    setSelectedOption("day");
+  }
 
   return (
     <View>
@@ -16,14 +23,22 @@ export const EventsList = ({ date, navigation }) => {
 
         return (
           <View key={dayIndex}>
-            <Text className="text-center font-bold text-lg mt-4 ">
-              {new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                dayIndex
-              ).toDateString()}
-            </Text>
-            <View className="w-full bg-lightGrey h-0.5 rounded-full mb-2" />
+            <TouchableOpacity
+              onPress={() => {
+                handlePress(
+                  new Date(date.getFullYear(), date.getMonth(), dayIndex)
+                );
+              }}
+            >
+              <Text className="text-center font-bold text-lg mt-4 ">
+                {new Date(
+                  date.getFullYear(),
+                  date.getMonth(),
+                  dayIndex
+                ).toDateString()}
+              </Text>
+              <View className="w-full bg-lightGrey h-0.5 rounded-full mb-2" />
+            </TouchableOpacity>
             {eventsOnDay.map((event, eventIndex) => (
               <Event key={eventIndex} event={event} navigation={navigation} />
             ))}

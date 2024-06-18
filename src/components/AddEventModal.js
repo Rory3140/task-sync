@@ -14,7 +14,7 @@ import {
   Switch,
   Keyboard,
 } from "react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheetModal from "@gorhom/bottom-sheet";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -34,6 +34,7 @@ export const AddEventModal = () => {
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [eventColor, setEventColor] = useState(calendarColors.violet);
+  const [description, setDescription] = useState("");
 
   const [allDay, setAllDay] = useState(false);
   const [startDateTime, setStartDateTime] = useState(date);
@@ -62,6 +63,7 @@ export const AddEventModal = () => {
     setEventId(null);
     setTitle("");
     setLocation("");
+    setDescription("");
     setAllDay(false);
     setCategory(items[0].value);
     setDropdownOpen(false);
@@ -72,6 +74,7 @@ export const AddEventModal = () => {
     const eventDetails = {
       title,
       location,
+      description,
       category: category === "event" && allDay ? "allDayEvent" : category,
       startDateTime: allDay
         ? new Date(startDateTime.setHours(0, 0, 0, 0)).toISOString()
@@ -96,6 +99,7 @@ export const AddEventModal = () => {
         setEventId(event.id);
         setTitle(event.title);
         setLocation(event.location);
+        setDescription(event.description);
         setEventColor(event.color);
         setCategory(event.category);
         setStartDateTime(new Date(event.startDateTime));
@@ -119,9 +123,9 @@ export const AddEventModal = () => {
     },
   }));
 
-  const snapPoints = useMemo(() => ["50%", "75%"], []);
+  const snapPoints = useMemo(() => ["50%", "100%"], []);
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={bottomSheetRef}
       index={-1}
       snapPoints={snapPoints}
@@ -130,6 +134,7 @@ export const AddEventModal = () => {
         Keyboard.dismiss();
         resetStates();
       }}
+      containerStyle={{ marginTop: 50 }}
     >
       <View className="bg-white rounded-t-xl w-full flex items-center justify-start h-full">
         <View className="flex items-center justify-center w-full px-4">
@@ -148,6 +153,7 @@ export const AddEventModal = () => {
               </Text>
             </TouchableOpacity>
           </View>
+
           <View className="flex items-center justify-center w-full">
             <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
               <View className="p-2 pl-4 m-2 w-full h-8 justify-center align-center">
@@ -168,6 +174,29 @@ export const AddEventModal = () => {
                   value={location}
                   onChangeText={(text) => setLocation(text)}
                 />
+              </View>
+            </View>
+
+            <View className="flex items-center justify-center w-full">
+              <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
+                <View className="p-2 pl-4 m-2 w-full h-16 justify-center align-center">
+                  <TextInput
+                    className="w-full h-16"
+                    placeholder="Event Description"
+                    value={description}
+                    placeholderTextColor={colors.grey}
+                    onChangeText={(text) => {
+                      if (text.includes("\n")) {
+                        setDescription(text.replace("\n", ""));
+                        Keyboard.dismiss();
+                      } else {
+                        setDescription(text);
+                      }
+                    }}
+                    multiline
+                    returnKeyType="done"
+                  />
+                </View>
               </View>
             </View>
 
@@ -286,6 +315,6 @@ export const AddEventModal = () => {
           </View>
         </View>
       </View>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };

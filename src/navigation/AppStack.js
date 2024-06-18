@@ -4,6 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { DateContext } from "../context/DateContext";
 import { EventDetailsModal } from "../components/EventDetailsModal";
+import { AddEventModal } from "../components/AddEventModal";
 import { Calendar } from "../screens/Calendar";
 import { Settings } from "../screens/Settings.js";
 import Example from "../screens/Example";
@@ -55,6 +56,7 @@ export const AppStack = () => {
         <Drawer.Screen name="Settings" component={Settings} />
         <Drawer.Screen name="Example" component={Example} />
       </Drawer.Navigator>
+      <AddEventModal />
       <EventDetailsModal />
     </>
   );

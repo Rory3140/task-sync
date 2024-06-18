@@ -19,7 +19,6 @@ import { DateSelector } from "../components/DateSelector";
 import { AllDayEvents } from "../components/AllDayEvents";
 import { Timetable } from "../components/Timetable";
 import { EventsList } from "../components/EventsList";
-import { AddEventModal } from "../components/AddEventModal";
 import { colors } from "../utils/colors";
 
 export const Calendar = () => {
@@ -107,7 +106,7 @@ export const Calendar = () => {
                 setBlockHeight={setBlockHeight}
               />
             ) : (
-              <EventsList date={date} />
+              <EventsList setSelectedOption={setSelectedOption} />
             )}
             <View className="h-24" />
           </ScrollView>
@@ -122,7 +121,6 @@ export const Calendar = () => {
             <Text className="text-xl font-thick color-primary">Add Event</Text>
           </TouchableOpacity>
         </View>
-        <AddEventModal />
       </SafeAreaView>
     </GestureHandlerRootView>
   );

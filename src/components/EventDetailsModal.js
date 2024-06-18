@@ -127,6 +127,14 @@ export const EventDetailsModal = () => {
               <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
             </>
           )}
+          {event?.description && (
+            <View className="flex w-full">
+              <Text className="text-lg">Notes:</Text>
+              <Text className="text-lg">{event?.description}</Text>
+              <View className="w-full bg-lightGrey h-[1] rounded-full my-2" />
+            </View>
+          )}
+
           <View
             className="w-full h-6 rounded-full my-2"
             style={{ backgroundColor: event?.color }}
