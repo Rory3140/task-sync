@@ -42,7 +42,7 @@ export const DateSelector = ({
             { label: "Month", value: "month" },
           ]}
           initial={0}
-          value={selectedOption}
+          value={(selectedOption = "day" ? 0 : 1)}
           onPress={(value) => {
             setSelectedOption(value);
           }}
