@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button } from "react-native";
+import { TouchableOpacity, Image, View, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
 import { DateContext } from "../context/DateContext";
@@ -22,7 +22,7 @@ export const AppStack = () => {
   return (
     <>
       <Drawer.Navigator
-        initialRouteName="CalendarStack"
+        initialRouteName="Calendar"
         screenOptions={{
           headerTitleStyle: {
             color: colors.black,
@@ -41,20 +41,27 @@ export const AppStack = () => {
           name="Calendar"
           component={Calendar}
           options={() => ({
-            title: "Calendar",
-            headerRight: () => (
-              <Button
-                onPress={() => {
-                  goToToday();
-                }}
-                title="Today"
-                color={colors.primary}
+            headerTitle: () => (
+              <Image
+                source={require("../../assets/logo/logo-text.png")}
+                style={{ width: 100, height: 30 }}
               />
+            ),
+
+            headerRight: () => (
+              <View className="mr-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    goToToday();
+                  }}
+                >
+                  <Text className="text-primary text-lg">Today</Text>
+                </TouchableOpacity>
+              </View>
             ),
           })}
         />
         <Drawer.Screen name="Settings" component={Settings} />
-        <Drawer.Screen name="Example" component={Example} />
       </Drawer.Navigator>
       <AddEventModal />
       <EventDetailsModal />

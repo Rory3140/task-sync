@@ -41,7 +41,7 @@ export const Register = () => {
         />
 
         <InputField
-          label={"Display Name"}
+          label={"Name"}
           icon={
             <MaterialIcons
               name="person-outline"
