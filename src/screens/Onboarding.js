@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { SvgXml } from "react-native-svg";
 
+import { AuthContext } from "../context/AuthContext";
 import OnboardingBackground from "../../assets/backgrounds/OnboardingBackground.js";
 import { colors } from "../utils/colors";
 
 export const Onboarding = ({ navigation }) => {
+  const { guestLogin } = useContext(AuthContext);
+
   return (
     <View className="flex-1 bg-white">
       <View
@@ -13,7 +16,7 @@ export const Onboarding = ({ navigation }) => {
           position: "absolute",
           zIndex: -1,
           width: "100%",
-          height: "50%", 
+          height: "50%",
           bottom: 0,
         }}
       >
@@ -37,7 +40,7 @@ export const Onboarding = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             className="flex justify-center items-center bg-secondary px-10 py-2 rounded-full mb-4 w-64"
-            onPress={() => console.log("Guest")}
+            onPress={() => guestLogin()}
           >
             <Text className="text-primary text-lg font-bold">
               Continue as Guest

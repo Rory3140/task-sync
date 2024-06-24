@@ -15,9 +15,9 @@ import { AuthContext } from "../context/AuthContext";
 import { colors } from "../utils/colors";
 
 export const Login = ({ navigation }) => {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
 
   return (
     <KeyboardAvoidingView

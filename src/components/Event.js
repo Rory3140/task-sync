@@ -87,7 +87,7 @@ export const Event = ({ event, height }) => {
             </View>
           ) : (
             <View className="flex justify-center align-center w-3/4">
-                <View className="flex-row items-center justify-start w-3/5 overflow-hidden">
+                <View className="flex-row items-center justify-start w-3/4 overflow-hidden">
                   <BouncyCheckbox
                     size={25}
                     style={{ padding: 5 }}
@@ -101,6 +101,7 @@ export const Event = ({ event, height }) => {
                     }}
                     innerIconStyle={{ width: 20, height: 20 }}
                     textStyle={{ color: colors.black }}
+                    ellipsizeMode="tail"
                     isChecked={isChecked}
                     onPress={handleChecked}
                   />

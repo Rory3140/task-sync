@@ -27,18 +27,25 @@ export const AuthProvider = ({ children }) => {
           setInitializing(false);
           return;
         }
-
-        // Get user data from firestore after login
         setUserToken(token);
-        getDoc(doc(usersRef, token))
-          .then((docSnap) => {
-            if (docSnap.exists()) {
-              setUserData(docSnap.data());
-            }
-          })
-          .catch((error) => {
-            console.log("Error getting document:", error);
-          });
+        AsyncStorage.getItem("userData").then((data) => {
+          if (data) {
+            setUserData(JSON.parse(data));
+          }
+        });
+
+        if (token !== "guest") {
+          // Get user data from firestore after login
+          getDoc(doc(usersRef, token))
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                setUserData(docSnap.data());
+              }
+            })
+            .catch((error) => {
+              console.log("Error getting document:", error);
+            });
+        }
       })
       .then(() => {
         setTimeout(() => {
@@ -93,6 +100,22 @@ export const AuthProvider = ({ children }) => {
         setPassword("");
         setIsLoading(false);
       });
+  };
+
+  // Guest login function
+  const guestLogin = () => {
+    setUserToken("guest");
+    AsyncStorage.setItem("userToken", "guest");
+
+    setUserData({
+      email: "guest",
+      displayName: "Guest",
+      events: [],
+    });
+    AsyncStorage.setItem(
+      "userData",
+      JSON.stringify({ email: "guest", displayName: "Guest", events: [] })
+    );
   };
 
   // Logout function
@@ -194,12 +217,14 @@ export const AuthProvider = ({ children }) => {
       JSON.stringify({ ...userData, events: updatedEvents })
     );
 
-    // Update user data in Firestore
-    updateDoc(doc(usersRef, userToken), {
-      events: updatedEvents,
-    }).catch((error) => {
-      console.error("Error updating document: ", error);
-    });
+    if (userToken !== "guest") {
+      // Update user data in Firestore
+      updateDoc(doc(usersRef, userToken), {
+        events: updatedEvents,
+      }).catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    }
   };
 
   // Delete event function
@@ -216,12 +241,14 @@ export const AuthProvider = ({ children }) => {
       JSON.stringify({ ...userData, events: newEvents })
     );
 
-    // Update user data in Firestore
-    updateDoc(doc(usersRef, userToken), {
-      events: newEvents,
-    }).catch((error) => {
-      console.error("Error updating document: ", error);
-    });
+    if (userToken !== "guest") {
+      // Update user data in Firestore
+      updateDoc(doc(usersRef, userToken), {
+        events: newEvents,
+      }).catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    }
   };
 
   // Update and event
@@ -243,12 +270,14 @@ export const AuthProvider = ({ children }) => {
       JSON.stringify({ ...userData, events: updatedEvents })
     );
 
-    // Update user data in Firestore
-    updateDoc(doc(usersRef, userToken), {
-      events: updatedEvents,
-    }).catch((error) => {
-      console.error("Error updating document: ", error);
-    });
+    if (userToken !== "guest") {
+      // Update user data in Firestore
+      updateDoc(doc(usersRef, userToken), {
+        events: updatedEvents,
+      }).catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    }
   }
 
   // Update completed status of the event
@@ -270,12 +299,14 @@ export const AuthProvider = ({ children }) => {
       JSON.stringify({ ...userData, events: updatedEvents })
     );
 
-    // Update user data in Firestore
-    updateDoc(doc(usersRef, userToken), {
-      events: updatedEvents,
-    }).catch((error) => {
-      console.error("Error updating document: ", error);
-    });
+    if (userToken !== "guest") {
+      // Update user data in Firestore
+      updateDoc(doc(usersRef, userToken), {
+        events: updatedEvents,
+      }).catch((error) => {
+        console.error("Error updating document: ", error);
+      });
+    }
   }
 
   return (
@@ -286,6 +317,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         initializing,
         login,
+        guestLogin,
         logout,
         signup,
         addEvent,
