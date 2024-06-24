@@ -5,13 +5,13 @@ import { DateContext } from "../context/DateContext";
 import { Event } from "./Event";
 import { getEventsByMonth } from "../utils/functions";
 
-export const EventsList = ({ navigation, setSelectedOption }) => {
-  const { date, setDate } = useContext(DateContext);
+export const EventsList = ({ navigation }) => {
+  const { date, setDate, setListView } = useContext(DateContext);
   const eventsByDay = getEventsByMonth(date);
 
   function handlePress(date) {
     setDate(date);
-    setSelectedOption("day");
+    setListView(false);
   }
 
   return (

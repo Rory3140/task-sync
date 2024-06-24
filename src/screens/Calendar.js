@@ -20,25 +20,22 @@ import { AllDayEvents } from "../components/AllDayEvents";
 import { Timetable } from "../components/Timetable";
 import { EventsList } from "../components/EventsList";
 import { colors } from "../utils/colors";
+import { list } from "firebase/storage";
 
 export const Calendar = () => {
-  const { date, setDate } = useContext(DateContext);
+  const { date, setDate, listView } = useContext(DateContext);
   const { addEventRef } = useContext(RefContext);
 
-  const [selectedOption, setSelectedOption] = useState("day");
   const [blockHeight, setBlockHeight] = useState(0);
 
   const scrollViewRef = useRef(null);
 
   useEffect(() => {
     addEventRef.current?.close();
-  }, [date, selectedOption]);
+  }, [date, listView]);
 
   useEffect(() => {
-    if (
-      selectedOption === "day" &&
-      date.toDateString() === new Date().toDateString()
-    ) {
+    if (!listView && date.toDateString() === new Date().toDateString()) {
       if (blockHeight > 0) {
         setTimeout(() => {
           const currentHour = new Date().getHours();
@@ -52,10 +49,10 @@ export const Calendar = () => {
         }, 0);
       }
     }
-  }, [date, blockHeight, selectedOption]);
+  }, [date, blockHeight, listView]);
 
   function incrementDate() {
-    if (selectedOption === "month") {
+    if (listView) {
       setDate(new Date(date.setMonth(date.getMonth() + 1)));
     } else {
       setDate(new Date(date.setDate(date.getDate() + 1)));
@@ -63,7 +60,7 @@ export const Calendar = () => {
   }
 
   function decrementDate() {
-    if (selectedOption === "month") {
+    if (listView) {
       setDate(new Date(date.setMonth(date.getMonth() - 1)));
     } else {
       setDate(new Date(date.setDate(date.getDate() - 1)));
@@ -85,12 +82,10 @@ export const Calendar = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView className="flex-1 bg-offwhite">
         <DateSelector
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
           incrementDate={incrementDate}
           decrementDate={decrementDate}
         />
-        {selectedOption === "day" && <AllDayEvents />}
+        {!listView && <AllDayEvents />}
 
         <PanGestureHandler
           onHandlerStateChange={onPanGestureHandlerStateChange}
@@ -99,14 +94,14 @@ export const Calendar = () => {
             className="bg-offWhite p-4 flex-1 w-full"
             ref={scrollViewRef}
           >
-            {selectedOption === "day" ? (
+            {!listView ? (
               <Timetable
                 date={date}
                 blockHeight={blockHeight}
                 setBlockHeight={setBlockHeight}
               />
             ) : (
-              <EventsList setSelectedOption={setSelectedOption} />
+              <EventsList />
             )}
             <View className="h-24" />
           </ScrollView>

@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Text, TouchableOpacity, View, Platform } from "react-native";
 import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
-import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -9,19 +8,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { DateContext } from "../context/DateContext";
 import { colors } from "../utils/colors";
 
-export const DateSelector = ({
-  selectedOption,
-  setSelectedOption,
-  incrementDate,
-  decrementDate,
-}) => {
-  const { date, setDate } = useContext(DateContext);
+export const DateSelector = ({ incrementDate, decrementDate }) => {
+  const { date, setDate, listView } = useContext(DateContext);
   const [datePickerHeight, setDatePickerHeight] = useState(0);
-  const animatedHeight = useSharedValue(95);
+
+  const headerHeight = 50;
+  const animatedHeight = useSharedValue(headerHeight);
 
   const handleDatePress = () => {
     animatedHeight.value = withTiming(
-      animatedHeight.value === 95 ? 95 + datePickerHeight : 95,
+      animatedHeight.value === headerHeight
+        ? headerHeight + datePickerHeight
+        : headerHeight,
       {
         duration: 300,
       }
@@ -35,24 +33,9 @@ export const DateSelector = ({
         height: animatedHeight,
       }}
     >
-      <View className="p-2 flex items-center justify-centre w-full bg-white">
-        <SwitchSelector
-          options={[
-            { label: "Day", value: "day" },
-            { label: "Month", value: "month" },
-          ]}
-          initial={0}
-          onPress={(value) => {
-            setSelectedOption(value);
-          }}
-          buttonColor={colors.primary}
-          backgroundColor={colors.lightGrey}
-          borderColor={colors.lightGrey}
-          hasPadding
-        />
-      </View>
-
-      <View className="flex-row items-center justify-between w-full bg-white">
+      <View
+        className="flex-row items-center justify-between w-full bg-white p-2"
+      >
         <TouchableOpacity onPress={decrementDate}>
           <MaterialIcons
             name="keyboard-arrow-left"
@@ -63,10 +46,10 @@ export const DateSelector = ({
         <TouchableOpacity onPress={() => handleDatePress()}>
           <Text className="text-xl font-thick color-black">
             {(() => {
-              switch (selectedOption) {
-                case "day":
+              switch (listView) {
+                case false:
                   return date.toDateString();
-                case "month":
+                case true:
                   return `${date.toLocaleString("default", {
                     month: "long",
                   })} ${date.getFullYear()}`;

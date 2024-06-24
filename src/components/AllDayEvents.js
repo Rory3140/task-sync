@@ -15,7 +15,7 @@ export const AllDayEvents = ({}) => {
   }
 
   return (
-    <View className="bg-white border-b-0.5 border-lightGrey w-full max-h-24 pt-1">
+    <View className="bg-white border-b-0.5 border-lightGrey w-full max-h-24 py-1">
       <ScrollView className="px-1">
         {allDayEvents.map((event) => (
           <Event key={event.id} event={event} />
