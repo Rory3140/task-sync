@@ -312,6 +312,32 @@ export const AddEventModal = () => {
                 </>
               )}
             </View>
+
+            <View className="flex items-center justify-center rounded-xl w-full m-4 bg-offWhite">
+              <View className="p-2 pl-4 m-2 w-full h-8 flex-row justify-between align-center">
+                <Text className="text-l font-thick color-black">
+                  Event Color
+                </Text>
+                <View className="flex-row items-center justify-between">
+                  {Object.values(calendarColors).map((color) => (
+                    <TouchableOpacity
+                      key={color}
+                      onPress={() => setEventColor(color)}
+                    >
+                      <View
+                        className={`w-6 h-6 rounded-full m-1 ${
+                          color === eventColor
+                            ? "border-2 border-black"
+                            : "border-2 border-lightGrey"
+                        }`}
+                        style={{ backgroundColor: color }}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
+            
           </View>
         </View>
       </View>
