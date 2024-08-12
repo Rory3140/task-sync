@@ -8,7 +8,8 @@ import {DrawerContent} from "../components/DrawerContent.js";
 import { EventDetailsModal } from "../components/EventDetailsModal";
 import { AddEventModal } from "../components/AddEventModal";
 import { Calendar } from "../screens/Calendar";
-import { Settings } from "../screens/Settings.js";
+import { TaskList } from "../screens/TaskList";
+import { Settings } from "../screens/Settings";
 import { colors } from "../utils/colors";
 
 const Drawer = createDrawerNavigator();
@@ -58,6 +59,7 @@ export const AppStack = () => {
             ),
           })}
         />
+        <Drawer.Screen name="To Do List" component={TaskList } />
         <Drawer.Screen name="Settings" component={Settings} />
       </Drawer.Navigator>
       <AddEventModal />

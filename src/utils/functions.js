@@ -145,3 +145,34 @@ export function getCategory(event) {
     return "To Do Item";
   }
 }
+
+export function getAllTasksByDate() {
+  const { userData } = useContext(AuthContext);
+  if (!userData || !userData.events) {
+    return [];
+  }
+
+  // Create an object to hold tasks grouped by the exact date
+  const tasksByDate = {};
+
+  userData.events.forEach((event) => {
+    if (event.category === "toDoItem") {
+      // Filter to only include tasks
+      const eventStart = new Date(event.startDateTime);
+      const eventDate = eventStart.toISOString().split("T")[0]; // Get the date in "YYYY-MM-DD" format
+
+      if (!tasksByDate[eventDate]) {
+        tasksByDate[eventDate] = [];
+      }
+      tasksByDate[eventDate].push(event);
+    }
+  });
+
+  // Convert the tasksByDate object into an array of arrays
+  const result = Object.keys(tasksByDate).map((date) => ({
+    date,
+    tasks: tasksByDate[date],
+  }));
+
+  return result;
+}

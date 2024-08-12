@@ -20,7 +20,6 @@ import { AllDayEvents } from "../components/AllDayEvents";
 import { Timetable } from "../components/Timetable";
 import { EventsList } from "../components/EventsList";
 import { colors } from "../utils/colors";
-import { list } from "firebase/storage";
 
 export const Calendar = () => {
   const { date, setDate, listView } = useContext(DateContext);

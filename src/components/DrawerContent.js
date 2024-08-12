@@ -9,7 +9,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { DateContext } from "../context/DateContext";
 import { colors } from "../utils/colors";
-import { list } from "firebase/storage";
 
 export const DrawerContent = (props) => {
   const { listView, setListView } = useContext(DateContext);
@@ -30,12 +29,12 @@ export const DrawerContent = (props) => {
           </View>
           <TouchableOpacity
             className={`flex justify-center items-center w-8 h-8 mx-2 rounded-md
-             ${listView ? "bg-primary" : "bg-secondary"}`}
+             ${listView ? "bg-secondary" : "bg-white"}`}
             onPress={() => setListView(!listView)}
           >
             <MaterialIcons
               name="list"
-              color={listView ? colors.secondary : colors.primary}
+              color={colors.primary}
               size={30}
             />
           </TouchableOpacity>
